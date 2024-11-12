@@ -11,7 +11,6 @@ import {
 } from "@vendure/core";
 import { EmailPlugin, defaultEmailHandlers } from "@vendure/email-plugin";
 import "dotenv/config";
-import path from "path";
 import { orderCanceledNotificationProcess } from "./customOrderProcess/order-canceled-notification-process";
 import { productDeliveredNotificationProcess } from "./customOrderProcess/product-delivered-notification-process";
 import { CancelOrderPlugin } from "./plugins/cancelOrderPlugin";
@@ -23,6 +22,8 @@ import { PromotionPlugin } from "./plugins/promotionPlugin";
 import { shouldApplyCouponcode } from "./customPromotionConditions/shouldApply";
 import { ChannelPlugin } from "./plugins/channelPlugin";
 import {ManualCustomerChannelPlugin} from "./plugins/ManualCustomerChannelPlugin";
+import * as path from 'path';
+
 const IS_DEV = process.env.APP_ENV === "dev";
 
 export const config: VendureConfig = {
@@ -117,25 +118,24 @@ export const config: VendureConfig = {
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
-    // AutoAssignCustomerPlugin,
     
     AdminUiPlugin.init({
       port: 3000,
       route: "admin",
-      // app: compileUiExtensions({
-      //     outputPath:  path.join(__dirname, '../admin-ui'),
-      //     extensions: [
-      //         ManualCustomerChannelPlugin.ui,
-      //         {
-      //             id: 'assign-customer',
-      //             extensionPath: path.join(__dirname, 'plugins/ui'),
-      //             routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
-      //             providers: ['providers.ts']
-      //         },
-      //     ],
-      //     devMode: false,
-         
-      //   }),
+        app: compileUiExtensions({
+          outputPath: path.join(__dirname, '../admin-ui'),     
+                 extensions: [
+                ManualCustomerChannelPlugin.ui,
+                {
+                  id: 'assign-customer',
+                  extensionPath: path.join(__dirname, 'plugins/ui'),
+                  routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
+                  providers: ['providers.ts']
+              },
+            ],
+            devMode: false,
+        }),
+        
     }),
   ],
   orderOptions: {

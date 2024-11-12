@@ -1,33 +1,36 @@
 {
-  "name": "store1",
+  "name": "updatedvendure",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev:server": "ts-node ./src/index.ts",
     "dev:worker": "ts-node ./src/index-worker.ts",
-    "dev": "concurrently yarn:dev:*",
-    "build": "tsc",
+    "dev": "concurrently npm:dev:*",
     "start:server": "node ./dist/index.js",
     "start:worker": "node ./dist/index-worker.js",
-    "start": "concurrently yarn:start:*",
-    "migration:generate": "ts-node migration generate",
-    "migration:run": "ts-node migration run",
-    "migration:revert": "ts-node migration revert"
+    "start": "concurrently npm:start:*",
+    "copy": "npx copyfiles -u 1 'admin-ui/dist/**/*' dist",
+    "build": "tsc && yarn copy",
+    "build:admin": "rimraf admin-ui && npx ts-node src/compile-admin-ui.ts"
+
   },
   "dependencies": {
-    "@vendure/admin-ui-plugin": "3.0.4",
-    "@vendure/asset-server-plugin": "3.0.4",
-    "@vendure/core": "3.0.4",
-    "@vendure/email-plugin": "3.0.4",
-    "@vendure/ui-devkit": "^3.0.4",
-    "dotenv": "16.0.3",
+    "@types/request": "^2.48.12",
+    "@vendure/admin-ui-plugin": "3.0.5",
+    "@vendure/asset-server-plugin": "3.0.5",
+    "@vendure/core": "3.0.5",
+    "@vendure/email-plugin": "3.0.5",
+    "@vendure/migrate-v2": "^0.4.0",
+    "dotenv": "16.4.5",
     "mysql": "2.18.1",
-    "request": "^2.88.2",
-    "typescript": "4.9.5"
+    "request": "^2.88.2"
   },
   "devDependencies": {
-    "@vendure/cli": "^3.0.5",
-    "concurrently": "7.6.0",
-    "ts-node": "^10.9.1"
+    "@types/react": "18.3.12",
+    "@vendure/cli": "3.0.5",
+    "@vendure/ui-devkit": "3.0.5",
+    "concurrently": "9.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "5.3.3"
   }
 }

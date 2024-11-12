@@ -84,7 +84,7 @@ class ChannelAssignmentResolver {
 
 @VendurePlugin({
     imports: [PluginCommonModule],
-    compatibility: "3.0.4",
+    compatibility: "3.0.5",
     adminApiExtensions: {
         schema: schemaExtension,
         resolvers: [ChannelAssignmentResolver],
@@ -99,5 +99,3 @@ export class ManualCustomerChannelPlugin {
         providers: ['providers.ts'],
     };
 }
-
-
