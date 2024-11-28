@@ -21,8 +21,9 @@ import { CollectionIsPrivatePlugin } from "./plugins/collectionIsPrivate";
 import { PromotionPlugin } from "./plugins/promotionPlugin";
 import { shouldApplyCouponcode } from "./customPromotionConditions/shouldApply";
 import { ChannelPlugin } from "./plugins/channelPlugin";
-import {ManualCustomerChannelPlugin} from "./plugins/ManualCustomerChannelPlugin";
+
 import * as path from 'path';
+import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 
 const IS_DEV = process.env.APP_ENV === "dev";
 
@@ -117,6 +118,7 @@ export const config: VendureConfig = {
     CustomEventPlugin,
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
+    // DynamicCustomerChannelPlugin,
     ManualCustomerChannelPlugin,
     
     AdminUiPlugin.init({
@@ -128,16 +130,18 @@ export const config: VendureConfig = {
                 ManualCustomerChannelPlugin.ui,
                 {
                   id: 'assign-customer',
-                  extensionPath: path.join(__dirname, 'plugins/ui'),
+                  extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
                   routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
                   providers: ['providers.ts']
               },
-            ],
+                     
+                ],
             devMode: false,
         }),
         
     }),
-  ],
+      // ManualadmincustomerchannelPlugin.init({}),
+],
   orderOptions: {
     process: [
       defaultOrderProcess,
