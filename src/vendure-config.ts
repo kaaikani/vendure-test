@@ -1,6 +1,6 @@
 import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
-import { AdminUiPlugin } from "@vendure/admin-ui-plugin";
-import { AssetServerPlugin } from "@vendure/asset-server-plugin";
+import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
+import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import {
   DefaultJobQueuePlugin,
   DefaultSearchPlugin,
@@ -8,48 +8,47 @@ import {
   defaultPromotionConditions,
   defaultOrderProcess,
   dummyPaymentHandler,
-} from "@vendure/core";
-import { EmailPlugin, defaultEmailHandlers } from "@vendure/email-plugin";
-import "dotenv/config";
-import { orderCanceledNotificationProcess } from "./customOrderProcess/order-canceled-notification-process";
-import { productDeliveredNotificationProcess } from "./customOrderProcess/product-delivered-notification-process";
-import { CancelOrderPlugin } from "./plugins/cancelOrderPlugin";
-import { CheckUniquePhonePlugin } from "./plugins/checkUniquePhonePlugin";
-import { CustomEventPlugin } from "./plugins/customEventPlugin";
-import { CustomTokenPlugin } from "./plugins/customTokenPlugin";
-import { CollectionIsPrivatePlugin } from "./plugins/collectionIsPrivate";
-import { PromotionPlugin } from "./plugins/promotionPlugin";
-import { shouldApplyCouponcode } from "./customPromotionConditions/shouldApply";
-import { ChannelPlugin } from "./plugins/channelPlugin";
+} from '@vendure/core';
+import { EmailPlugin, defaultEmailHandlers } from '@vendure/email-plugin';
+import 'dotenv/config';
+import { orderCanceledNotificationProcess } from './customOrderProcess/order-canceled-notification-process';
+import { productDeliveredNotificationProcess } from './customOrderProcess/product-delivered-notification-process';
+import { CancelOrderPlugin } from './plugins/cancelOrderPlugin';
+import { CheckUniquePhonePlugin } from './plugins/checkUniquePhonePlugin';
+import { CustomEventPlugin } from './plugins/customEventPlugin';
+import { CustomTokenPlugin } from './plugins/customTokenPlugin';
+import { CollectionIsPrivatePlugin } from './plugins/collectionIsPrivate';
+import { PromotionPlugin } from './plugins/promotionPlugin';
+import { shouldApplyCouponcode } from './customPromotionConditions/shouldApply';
+import { ChannelPlugin } from './plugins/channelPlugin';
 
 import * as path from 'path';
 import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
+import { BannerPlugin } from './plugins/banner/banner.plugin';
 
-const IS_DEV = process.env.APP_ENV === "dev";
+const IS_DEV = process.env.APP_ENV === 'dev';
+const serverPort = +(process.env.PORT ?? 3000);
 
 export const config: VendureConfig = {
   apiOptions: {
-    port: 3000,
-    adminApiPath: "admin-api",
-    shopApiPath: "shop-api",
-    // The following options are useful in development mode,
-    // but are best turned off for production for security
-    // reasons.
+    port: serverPort,
+    adminApiPath: 'admin-api',
+    shopApiPath: 'shop-api',
     ...(IS_DEV
       ? {
           adminApiPlayground: {
-            settings: { "request.credentials": "include" } as any,
+            settings: { 'request.credentials': 'include' } as any,
           },
           adminApiDebug: true,
           shopApiPlayground: {
-            settings: { "request.credentials": "include" } as any,
+            settings: { 'request.credentials': 'include' } as any,
           },
           shopApiDebug: true,
         }
       : {}),
   },
   authOptions: {
-    tokenMethod: ["bearer", "cookie"],
+    tokenMethod: ['bearer', 'cookie'],
     superadminCredentials: {
       identifier: process.env.SUPERADMIN_USERNAME,
       password: process.env.SUPERADMIN_PASSWORD,
@@ -60,11 +59,9 @@ export const config: VendureConfig = {
     requireVerification: false,
   },
   dbConnectionOptions: {
-    type: "mysql",
-    // See the README.md "Migrations" section for an explanation of
-    // the `synchronize` and `migrations` options.
+    type: 'mysql',
     synchronize: true,
-    migrations: [path.join(__dirname, "./migrations/*.+(js|ts)")],
+    migrations: [path.join(__dirname, './migrations/*.+(js|ts)')],
     logging: false,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
@@ -75,40 +72,29 @@ export const config: VendureConfig = {
   paymentOptions: {
     paymentMethodHandlers: [dummyPaymentHandler],
   },
-  // When adding or altering custom field definitions, the database will
-  // need to be updated. See the "Migrations" section in README.md.
   customFields: {},
   promotionOptions: {
-    promotionConditions: [
-      ...defaultPromotionConditions,
-      shouldApplyCouponcode
-    ],
+    promotionConditions: [...defaultPromotionConditions, shouldApplyCouponcode],
   },
   plugins: [
     AssetServerPlugin.init({
-      route: "assets",
-      assetUploadDir: path.join(__dirname, "../static/assets"),
-      // For local dev, the correct value for assetUrlPrefix should
-      // be guessed correctly, but for production it will usually need
-      // to be set manually to match your production url.
-      assetUrlPrefix: IS_DEV ? undefined : "https://www.my-shop.com/assets",
+      route: 'assets',
+      assetUploadDir: path.join(__dirname, '../static/assets'),
+      assetUrlPrefix: IS_DEV ? undefined : 'https://www.my-shop.com/assets',
     }),
     DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
     DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
     EmailPlugin.init({
       devMode: true,
-      outputPath: path.join(__dirname, "../static/email/test-emails"),
-      route: "mailbox",
+      outputPath: path.join(__dirname, '../static/email/test-emails'),
+      route: 'mailbox',
       handlers: defaultEmailHandlers,
-      templatePath: path.join(__dirname, "../static/email/templates"),
+      templatePath: path.join(__dirname, '../static/email/templates'),
       globalTemplateVars: {
-        // The following variables will change depending on your storefront implementation.
-        // Here we are assuming a storefront running at http://localhost:8080.
         fromAddress: '"example" <noreply@example.com>',
-        verifyEmailAddressUrl: "http://localhost:8080/verify",
-        passwordResetUrl: "http://localhost:8080/password-reset",
-        changeEmailAddressUrl:
-          "http://localhost:8080/verify-email-address-change",
+        verifyEmailAddressUrl: 'http://localhost:8080/verify',
+        passwordResetUrl: 'http://localhost:8080/password-reset',
+        changeEmailAddressUrl: 'http://localhost:8080/verify-email-address-change',
       },
     }),
     ChannelPlugin,
@@ -118,35 +104,34 @@ export const config: VendureConfig = {
     CustomEventPlugin,
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
-    // DynamicCustomerChannelPlugin,
     ManualCustomerChannelPlugin,
-    
+    BannerPlugin,
+
     AdminUiPlugin.init({
-      port: 3000,
-      route: "admin",
-        app: compileUiExtensions({
-          outputPath: path.join(__dirname, '../admin-ui'),     
-                 extensions: [
-                ManualCustomerChannelPlugin.ui,
-                {
-                  id: 'assign-customer',
-                  extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
-                  routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
-                  providers: ['providers.ts']
-              },
-                     
-                ],
-            devMode: false,
-        }),
-        
+      port: serverPort + 2,
+      route: 'admin',
+      adminUiConfig: {
+        apiPort: serverPort,
+      },
+      app: compileUiExtensions({
+        outputPath: path.join(__dirname, '../admin-ui'),
+        extensions: [
+          ManualCustomerChannelPlugin.ui,
+          {
+            id: 'assign-customer',
+            extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
+            routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
+            providers: ['providers.ts'],
+          },
+          BannerPlugin.ui, 
+        ],
+        devMode: false,
+      }),
     }),
-      // ManualadmincustomerchannelPlugin.init({}),
+    
+      
 ],
   orderOptions: {
-    process: [
-      defaultOrderProcess,
-      productDeliveredNotificationProcess,
-      orderCanceledNotificationProcess,
-    ],
+    process: [defaultOrderProcess, productDeliveredNotificationProcess, orderCanceledNotificationProcess],
   },
 };
