@@ -5,8 +5,4 @@ export const extensionRoutes = [  {
   {
     path: 'extensions/manual-1',
     loadChildren: () => import('./extensions/assign-customer/routes'),
-  },
-  {
-    path: 'extensions/banner-management',
-    loadChildren: () => import('./extensions/banner-management-ui/routes'),
   }];

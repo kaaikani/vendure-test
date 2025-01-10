@@ -105,7 +105,7 @@ export const config: VendureConfig = {
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
-    BannerPlugin,
+    // BannerPlugin,
 
     AdminUiPlugin.init({
       port: serverPort + 2,
@@ -123,7 +123,7 @@ export const config: VendureConfig = {
             routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
             providers: ['providers.ts'],
           },
-          BannerPlugin.ui, 
+          // BannerPlugin.ui, 
         ],
         devMode: false,
       }),
