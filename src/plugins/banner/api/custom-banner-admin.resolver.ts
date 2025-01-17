@@ -18,13 +18,13 @@ import { CustomBannerService } from '../services/custom-banner.service';
 // These can be replaced by generated types if you set up code generation
 interface CreateCustomBannerInput {
     code: string;
-    // Define the input fields here
+   
     customFields?: CustomFieldsObject;
 }
 interface UpdateCustomBannerInput {
     id: ID;
     code?: string;
-    // Define the input fields here
+    
     customFields?: CustomFieldsObject;
 }
 
@@ -57,11 +57,11 @@ export class CustomBannerAdminResolver {
     @Allow(Permission.SuperAdmin)
     async createCustomBanner(
         @Ctx() ctx: RequestContext,
-        @Args() args: { input: CreateCustomBannerInput },
+        @Args('input') input: CreateCustomBannerInput
     ): Promise<CustomBanner> {
-        return this.customBannerService.create(ctx, args.input);
+        return this.customBannerService.create(ctx, input); // Use customBannerService here
     }
-    
+
     @Mutation()
     @Transaction()
     @Allow(Permission.SuperAdmin)
@@ -79,3 +79,6 @@ export class CustomBannerAdminResolver {
         return this.customBannerService.delete(ctx, args.id);
     }
 }
+
+
+

@@ -1,13 +1,29 @@
 import gql from 'graphql-tag';
 
 
+export const shopApiExtensions = gql`
+    type CustomBanner {
+        id: ID!
+        createdAt: DateTime!
+        updatedAt: DateTime!
+        assets: [Asset!]!
+        channels: [Channel!]!
+    }
+
+    extend type Query {
+        customBanners(channelId: ID!): [CustomBanner!]!  # <-- Accepts channelId as argument
+    }
+`;
+
 const customBannerAdminApiExtensions = gql`
-  type CustomBanner implements Node {
+ type CustomBanner implements Node {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
     assets: [Asset!]!
-  }
+    channels: [Channel!]!
+}
+
 
   type CustomBannerList implements PaginatedList {
     items: [CustomBanner!]!
@@ -20,9 +36,15 @@ const customBannerAdminApiExtensions = gql`
     take: Int
     filter: CustomBannerFilter
     sort: CustomBannerSort
+    channelId: ID!
   }
+input CustomBannerFilterParameter {
+  channels: [ID!]
+}
+
 
   input CustomBannerFilter {
+     channels: [ID!]
     assets: [ID!]
   }
 

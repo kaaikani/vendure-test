@@ -13,6 +13,13 @@ const config: CodegenConfig = {
     },
     generates: {
         './src/plugins/banner/gql/generated.ts': { plugins: ['typescript'] },
+        './src/plugins/banner/ui/gql/': {
+            preset: 'client',
+            documents: './src/plugins/banner/ui/**/*.ts',
+            presetConfig: {
+                fragmentMasking: false,
+            },
+        },
     },
 };
 

@@ -27,11 +27,11 @@ import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchanne
 import { BannerPlugin } from './plugins/banner/banner.plugin';
 
 const IS_DEV = process.env.APP_ENV === 'dev';
-const serverPort = +(process.env.PORT ?? 3000);
+
 
 export const config: VendureConfig = {
   apiOptions: {
-    port: serverPort,
+    port: 3000,
     adminApiPath: 'admin-api',
     shopApiPath: 'shop-api',
     ...(IS_DEV
@@ -105,13 +105,13 @@ export const config: VendureConfig = {
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
-    // BannerPlugin,
+    BannerPlugin,
 
     AdminUiPlugin.init({
-      port: serverPort + 2,
+      port:  3000,
       route: 'admin',
       adminUiConfig: {
-        apiPort: serverPort,
+        apiPort: 3000,
       },
       app: compileUiExtensions({
         outputPath: path.join(__dirname, '../admin-ui'),
@@ -123,7 +123,7 @@ export const config: VendureConfig = {
             routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
             providers: ['providers.ts'],
           },
-          // BannerPlugin.ui, 
+          BannerPlugin.ui, 
         ],
         devMode: false,
       }),
