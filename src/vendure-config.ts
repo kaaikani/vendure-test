@@ -36,15 +36,15 @@ export const config: VendureConfig = {
     shopApiPath: 'shop-api',
     ...(IS_DEV
       ? {
-          adminApiPlayground: {
-            settings: { 'request.credentials': 'include' } as any,
-          },
-          adminApiDebug: true,
-          shopApiPlayground: {
-            settings: { 'request.credentials': 'include' } as any,
-          },
-          shopApiDebug: true,
-        }
+        adminApiPlayground: {
+          settings: { 'request.credentials': 'include' } as any,
+        },
+        adminApiDebug: true,
+        shopApiPlayground: {
+          settings: { 'request.credentials': 'include' } as any,
+        },
+        shopApiDebug: true,
+      }
       : {}),
   },
   authOptions: {
@@ -108,29 +108,18 @@ export const config: VendureConfig = {
     BannerPlugin,
 
     AdminUiPlugin.init({
-      port:  3000,
+      port: 3000,
       route: 'admin',
       adminUiConfig: {
         apiPort: 3000,
       },
-      app: compileUiExtensions({
-        outputPath: path.join(__dirname, '../admin-ui'),
-        extensions: [
-          ManualCustomerChannelPlugin.ui,
-          {
-            id: 'assign-customer',
-            extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
-            routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
-            providers: ['providers.ts'],
-          },
-          BannerPlugin.ui, 
-        ],
-        devMode: false,
-      }),
+      app: {
+        path: path.join(__dirname, '../admin-ui/dist'),
+    },
     }),
-    
-      
-],
+
+
+  ],
   orderOptions: {
     process: [defaultOrderProcess, productDeliveredNotificationProcess, orderCanceledNotificationProcess],
   },

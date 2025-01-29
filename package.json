@@ -24,9 +24,11 @@
     "@vendure/core": "3.0.5",
     "@vendure/email-plugin": "3.0.5",
     "@vendure/migrate-v2": "^0.4.0",
+    "copyfiles": "^2.4.1",
     "dotenv": "16.4.5",
     "mysql": "2.18.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "rimraf": "^6.0.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.3",
@@ -38,5 +40,12 @@
     "concurrently": "9.0.1",
     "ts-node": "^10.9.2",
     "typescript": "5.3.3"
+  },
+  "overrides": {
+    "@nestjs/core": "^10.4.15",
+    "@nestjs/common": "^10.4.15",
+    "@nestjs/graphql": "^12.2.2",
+    "@nestjs/typeorm": "^10.0.2",
+    "graphql": "16.8.1"
   }
 }
