@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const config = {
     overwrite: true,
     // This assumes your server is running on the standard port
@@ -20,4 +22,4 @@ const config = {
         },
     },
 };
-export default config;
+exports.default = config;

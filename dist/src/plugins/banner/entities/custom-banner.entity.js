@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,27 +8,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Asset, Channel, VendureEntity } from '@vendure/core';
-import { Entity, ManyToMany, JoinTable } from 'typeorm';
-let CustomBanner = class CustomBanner extends VendureEntity {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CustomBanner = void 0;
+const core_1 = require("@vendure/core");
+const typeorm_1 = require("typeorm");
+let CustomBanner = class CustomBanner extends core_1.VendureEntity {
     constructor(input) {
         super(input);
     }
-    assets;
-    channels;
 };
+exports.CustomBanner = CustomBanner;
 __decorate([
-    ManyToMany(() => Asset, { eager: true }),
-    JoinTable(),
+    (0, typeorm_1.ManyToMany)(() => core_1.Asset, { eager: true }),
+    (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
 ], CustomBanner.prototype, "assets", void 0);
 __decorate([
-    ManyToMany(() => Channel),
-    JoinTable(),
+    (0, typeorm_1.ManyToMany)(() => core_1.Channel),
+    (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
 ], CustomBanner.prototype, "channels", void 0);
-CustomBanner = __decorate([
-    Entity(),
+exports.CustomBanner = CustomBanner = __decorate([
+    (0, typeorm_1.Entity)(),
     __metadata("design:paramtypes", [Object])
 ], CustomBanner);
-export { CustomBanner };

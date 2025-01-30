@@ -1,5 +1,8 @@
-import { SmsService } from "../smsService";
-export const productDeliveredNotificationProcess = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.productDeliveredNotificationProcess = void 0;
+const smsService_1 = require("../smsService");
+exports.productDeliveredNotificationProcess = {
     transitions: {
         Shipped: {
             to: ["ProductDeliveredNotificationProcess"],
@@ -13,7 +16,7 @@ export const productDeliveredNotificationProcess = {
         if (fromState === "ProductDeliveredNotificationProcess" &&
             toState === "Delivered") {
             // order Delivered
-            const smsService = new SmsService("646b0f38d6fc052379785ec2", data.order.customer.phoneNumber, "delivered", data.order.id.toString());
+            const smsService = new smsService_1.SmsService("646b0f38d6fc052379785ec2", data.order.customer.phoneNumber, "delivered", data.order.id.toString());
             smsService.sendSms();
         }
     },

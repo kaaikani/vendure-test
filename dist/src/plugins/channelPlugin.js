@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,16 +11,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Query, Resolver } from "@nestjs/graphql";
-import { ChannelService, Ctx, PluginCommonModule, RequestContext, VendurePlugin } from "@vendure/core";
-import gql from "graphql-tag";
-const schemaExtension = gql `
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChannelPlugin = void 0;
+const graphql_1 = require("@nestjs/graphql");
+const core_1 = require("@vendure/core");
+const graphql_tag_1 = __importDefault(require("graphql-tag"));
+const schemaExtension = (0, graphql_tag_1.default) `
 extend type Query {
   getChannelList: [Channel!]!
 }
 `;
 let ChannelResolver = class ChannelResolver {
-    channelService;
     constructor(channelService) {
         this.channelService = channelService;
     }
@@ -29,27 +34,27 @@ let ChannelResolver = class ChannelResolver {
     }
 };
 __decorate([
-    Query(),
-    __param(0, Ctx()),
+    (0, graphql_1.Query)(),
+    __param(0, (0, core_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [RequestContext]),
+    __metadata("design:paramtypes", [core_1.RequestContext]),
     __metadata("design:returntype", Promise)
 ], ChannelResolver.prototype, "getChannelList", null);
 ChannelResolver = __decorate([
-    Resolver(),
-    __metadata("design:paramtypes", [ChannelService])
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [core_1.ChannelService])
 ], ChannelResolver);
 let ChannelPlugin = class ChannelPlugin {
 };
-ChannelPlugin = __decorate([
-    VendurePlugin({
-        imports: [PluginCommonModule],
+exports.ChannelPlugin = ChannelPlugin;
+exports.ChannelPlugin = ChannelPlugin = __decorate([
+    (0, core_1.VendurePlugin)({
+        imports: [core_1.PluginCommonModule],
         compatibility: '^3.0.4',
         shopApiExtensions: {
             schema: schemaExtension,
             resolvers: [ChannelResolver],
         },
-        providers: [ChannelService],
+        providers: [core_1.ChannelService],
     })
 ], ChannelPlugin);
-export { ChannelPlugin };

@@ -109,13 +109,29 @@ export const config: VendureConfig = {
 
     AdminUiPlugin.init({
       port: 3000,
-      route: 'admin',
-      adminUiConfig: {
-        apiPort: 3000,
-      },
-      app: {
-        path: path.join(__dirname, '../admin-ui/dist'),
-    },
+      route: "admin",
+      app: compileUiExtensions({
+        outputPath: path.join(__dirname, '../admin-ui/dist'),
+        extensions: [
+          ManualCustomerChannelPlugin.ui,
+          {
+            id: 'manual-admin',
+            extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
+            routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
+            providers: ['providers.ts'],
+          },
+          BannerPlugin.ui,
+          {
+            id: 'cms-banner',
+            extensionPath: path.join(__dirname, 'plugins/banner/ui'),
+            routes: [{ route: 'banner', filePath: 'routes.ts' }],
+            providers: ['providers.ts'],
+          },
+
+        ],
+
+        devMode: false,
+      }),
     }),
 
 

@@ -1,24 +1,50 @@
-import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
-import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
-import { AssetServerPlugin } from '@vendure/asset-server-plugin';
-import { DefaultJobQueuePlugin, DefaultSearchPlugin, defaultPromotionConditions, defaultOrderProcess, dummyPaymentHandler, } from '@vendure/core';
-import { EmailPlugin, defaultEmailHandlers } from '@vendure/email-plugin';
-import 'dotenv/config';
-import { orderCanceledNotificationProcess } from './customOrderProcess/order-canceled-notification-process';
-import { productDeliveredNotificationProcess } from './customOrderProcess/product-delivered-notification-process';
-import { CancelOrderPlugin } from './plugins/cancelOrderPlugin';
-import { CheckUniquePhonePlugin } from './plugins/checkUniquePhonePlugin';
-import { CustomEventPlugin } from './plugins/customEventPlugin';
-import { CustomTokenPlugin } from './plugins/customTokenPlugin';
-import { CollectionIsPrivatePlugin } from './plugins/collectionIsPrivate';
-import { PromotionPlugin } from './plugins/promotionPlugin';
-import { shouldApplyCouponcode } from './customPromotionConditions/shouldApply';
-import { ChannelPlugin } from './plugins/channelPlugin';
-import * as path from 'path';
-import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
-import { BannerPlugin } from './plugins/banner/banner.plugin';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.config = void 0;
+const compiler_1 = require("@vendure/ui-devkit/compiler");
+const admin_ui_plugin_1 = require("@vendure/admin-ui-plugin");
+const asset_server_plugin_1 = require("@vendure/asset-server-plugin");
+const core_1 = require("@vendure/core");
+const email_plugin_1 = require("@vendure/email-plugin");
+require("dotenv/config");
+const order_canceled_notification_process_1 = require("./customOrderProcess/order-canceled-notification-process");
+const product_delivered_notification_process_1 = require("./customOrderProcess/product-delivered-notification-process");
+const cancelOrderPlugin_1 = require("./plugins/cancelOrderPlugin");
+const checkUniquePhonePlugin_1 = require("./plugins/checkUniquePhonePlugin");
+const customEventPlugin_1 = require("./plugins/customEventPlugin");
+const customTokenPlugin_1 = require("./plugins/customTokenPlugin");
+const collectionIsPrivate_1 = require("./plugins/collectionIsPrivate");
+const promotionPlugin_1 = require("./plugins/promotionPlugin");
+const shouldApply_1 = require("./customPromotionConditions/shouldApply");
+const channelPlugin_1 = require("./plugins/channelPlugin");
+const path = __importStar(require("path"));
+const manualadmincustomerchannel_plugin_1 = require("./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin");
+const banner_plugin_1 = require("./plugins/banner/banner.plugin");
 const IS_DEV = process.env.APP_ENV === 'dev';
-export const config = {
+exports.config = {
     apiOptions: {
         port: 3000,
         adminApiPath: 'admin-api',
@@ -59,25 +85,25 @@ export const config = {
         password: process.env.DB_PASSWORD,
     },
     paymentOptions: {
-        paymentMethodHandlers: [dummyPaymentHandler],
+        paymentMethodHandlers: [core_1.dummyPaymentHandler],
     },
     customFields: {},
     promotionOptions: {
-        promotionConditions: [...defaultPromotionConditions, shouldApplyCouponcode],
+        promotionConditions: [...core_1.defaultPromotionConditions, shouldApply_1.shouldApplyCouponcode],
     },
     plugins: [
-        AssetServerPlugin.init({
+        asset_server_plugin_1.AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, '../static/assets'),
             assetUrlPrefix: IS_DEV ? undefined : 'https://www.my-shop.com/assets',
         }),
-        DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
-        DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
-        EmailPlugin.init({
+        core_1.DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
+        core_1.DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
+        email_plugin_1.EmailPlugin.init({
             devMode: true,
             outputPath: path.join(__dirname, '../static/email/test-emails'),
             route: 'mailbox',
-            handlers: defaultEmailHandlers,
+            handlers: email_plugin_1.defaultEmailHandlers,
             templatePath: path.join(__dirname, '../static/email/templates'),
             globalTemplateVars: {
                 fromAddress: '"example" <noreply@example.com>',
@@ -86,38 +112,41 @@ export const config = {
                 changeEmailAddressUrl: 'http://localhost:8080/verify-email-address-change',
             },
         }),
-        ChannelPlugin,
-        CheckUniquePhonePlugin,
-        PromotionPlugin,
-        CancelOrderPlugin,
-        CustomEventPlugin,
-        CustomTokenPlugin,
-        CollectionIsPrivatePlugin,
-        ManualCustomerChannelPlugin,
-        BannerPlugin,
-        AdminUiPlugin.init({
+        channelPlugin_1.ChannelPlugin,
+        checkUniquePhonePlugin_1.CheckUniquePhonePlugin,
+        promotionPlugin_1.PromotionPlugin,
+        cancelOrderPlugin_1.CancelOrderPlugin,
+        customEventPlugin_1.CustomEventPlugin,
+        customTokenPlugin_1.CustomTokenPlugin,
+        collectionIsPrivate_1.CollectionIsPrivatePlugin,
+        manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin,
+        banner_plugin_1.BannerPlugin,
+        admin_ui_plugin_1.AdminUiPlugin.init({
             port: 3000,
-            route: 'admin',
-            adminUiConfig: {
-                apiPort: 3000,
-            },
-            app: compileUiExtensions({
-                outputPath: path.join(__dirname, '../admin-ui'),
+            route: "admin",
+            app: (0, compiler_1.compileUiExtensions)({
+                outputPath: path.join(__dirname, '../admin-ui/dist'),
                 extensions: [
-                    ManualCustomerChannelPlugin.ui,
+                    manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin.ui,
                     {
-                        id: 'assign-customer',
+                        id: 'manual-admin',
                         extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
-                        routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
+                        routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
                         providers: ['providers.ts'],
                     },
-                    BannerPlugin.ui,
+                    banner_plugin_1.BannerPlugin.ui,
+                    {
+                        id: 'cms-banner',
+                        extensionPath: path.join(__dirname, 'plugins/banner/ui'),
+                        routes: [{ route: 'banner', filePath: 'routes.ts' }],
+                        providers: ['providers.ts'],
+                    },
                 ],
-                devMode: false,
+                devMode: true,
             }),
         }),
     ],
     orderOptions: {
-        process: [defaultOrderProcess, productDeliveredNotificationProcess, orderCanceledNotificationProcess],
+        process: [core_1.defaultOrderProcess, product_delivered_notification_process_1.productDeliveredNotificationProcess, order_canceled_notification_process_1.orderCanceledNotificationProcess],
     },
 };

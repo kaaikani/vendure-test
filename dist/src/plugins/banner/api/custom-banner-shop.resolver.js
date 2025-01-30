@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,11 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Args, Query, Resolver } from '@nestjs/graphql';
-import { RequestContext } from '@vendure/core';
-import { CustomBannerService } from '../services/custom-banner.service';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CustomBannerShopResolver = void 0;
+const graphql_1 = require("@nestjs/graphql");
+const core_1 = require("@vendure/core");
+const custom_banner_service_1 = require("../services/custom-banner.service");
 let CustomBannerShopResolver = class CustomBannerShopResolver {
-    customBannerService;
     constructor(customBannerService) {
         this.customBannerService = customBannerService;
     }
@@ -24,16 +26,16 @@ let CustomBannerShopResolver = class CustomBannerShopResolver {
         return this.customBannerService.findByChannel(ctx, channelId);
     }
 };
+exports.CustomBannerShopResolver = CustomBannerShopResolver;
 __decorate([
-    Query(),
-    __param(0, Args('channelId')),
+    (0, graphql_1.Query)(),
+    __param(0, (0, graphql_1.Args)('channelId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, RequestContext // Use RequestContext directly
+    __metadata("design:paramtypes", [String, core_1.RequestContext // Use RequestContext directly
     ]),
     __metadata("design:returntype", Promise)
 ], CustomBannerShopResolver.prototype, "customBanners", null);
-CustomBannerShopResolver = __decorate([
-    Resolver(),
-    __metadata("design:paramtypes", [CustomBannerService])
+exports.CustomBannerShopResolver = CustomBannerShopResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [custom_banner_service_1.CustomBannerService])
 ], CustomBannerShopResolver);
-export { CustomBannerShopResolver };

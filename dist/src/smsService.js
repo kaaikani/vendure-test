@@ -1,13 +1,17 @@
-import request from "request";
-export class SmsService {
-    smsData = {
-        template_id: "64900d7fd6fc053c5e31a685",
-        sender: "KAIMSG",
-        mobiles: "91XXXXXXXXXX",
-    };
-    orderType;
-    orderId;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SmsService = void 0;
+const request_1 = __importDefault(require("request"));
+class SmsService {
     constructor(templateId, mobiles, orderType, orderId) {
+        this.smsData = {
+            template_id: "64900d7fd6fc053c5e31a685",
+            sender: "KAIMSG",
+            mobiles: "91XXXXXXXXXX",
+        };
         this.smsData.template_id = templateId;
         this.smsData.mobiles = '+91' + mobiles;
         this.orderType = orderType;
@@ -30,7 +34,7 @@ export class SmsService {
             },
         };
         console.log('template id ' + this.smsData.template_id + 'sender ' + this.smsData.sender + 'mobile ' + this.smsData.mobiles + 'number ' + this.smsData.number + 'var' + this.smsData.var);
-        request(options, (error, response) => {
+        (0, request_1.default)(options, (error, response) => {
             if (error) {
                 console.log(error);
             }
@@ -40,3 +44,4 @@ export class SmsService {
         });
     }
 }
+exports.SmsService = SmsService;

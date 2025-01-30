@@ -1,4 +1,8 @@
-export class StorageService {
-    static userInfo = null;
-    static passwordResetToken = null;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StorageService = void 0;
+class StorageService {
 }
+exports.StorageService = StorageService;
+StorageService.userInfo = null;
+StorageService.passwordResetToken = null;
