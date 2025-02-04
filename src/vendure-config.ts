@@ -9,7 +9,7 @@ import {
   defaultOrderProcess,
   dummyPaymentHandler,
 } from '@vendure/core';
-import { EmailPlugin, defaultEmailHandlers } from '@vendure/email-plugin';
+import { EmailPlugin, FileBasedTemplateLoader, defaultEmailHandlers } from '@vendure/email-plugin';
 import 'dotenv/config';
 import { orderCanceledNotificationProcess } from './customOrderProcess/order-canceled-notification-process';
 import { productDeliveredNotificationProcess } from './customOrderProcess/product-delivered-notification-process';
@@ -23,8 +23,7 @@ import { shouldApplyCouponcode } from './customPromotionConditions/shouldApply';
 import { ChannelPlugin } from './plugins/channelPlugin';
 
 import * as path from 'path';
-import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
-import { BannerPlugin } from './plugins/banner/banner.plugin';
+
 
 const IS_DEV = process.env.APP_ENV === 'dev';
 
@@ -89,7 +88,7 @@ export const config: VendureConfig = {
       outputPath: path.join(__dirname, '../static/email/test-emails'),
       route: 'mailbox',
       handlers: defaultEmailHandlers,
-      templatePath: path.join(__dirname, '../static/email/templates'),
+      templateLoader: new FileBasedTemplateLoader(path.join(__dirname, 'static/email/templates')), // ✅ Corrected
       globalTemplateVars: {
         fromAddress: '"example" <noreply@example.com>',
         verifyEmailAddressUrl: 'http://localhost:8080/verify',
@@ -97,6 +96,7 @@ export const config: VendureConfig = {
         changeEmailAddressUrl: 'http://localhost:8080/verify-email-address-change',
       },
     }),
+    
     ChannelPlugin,
     CheckUniquePhonePlugin,
     PromotionPlugin,
@@ -104,34 +104,33 @@ export const config: VendureConfig = {
     CustomEventPlugin,
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
-    ManualCustomerChannelPlugin,
-    BannerPlugin,
+   
 
     AdminUiPlugin.init({
       port: 3000,
       route: "admin",
-      app: compileUiExtensions({
-        outputPath: path.join(__dirname, '../admin-ui/dist'),
-        extensions: [
-          ManualCustomerChannelPlugin.ui,
-          {
-            id: 'manual-admin',
-            extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
-            routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
-            providers: ['providers.ts'],
-          },
-          BannerPlugin.ui,
-          {
-            id: 'cms-banner',
-            extensionPath: path.join(__dirname, 'plugins/banner/ui'),
-            routes: [{ route: 'banner', filePath: 'routes.ts' }],
-            providers: ['providers.ts'],
-          },
+      // app: compileUiExtensions({
+      //   outputPath: path.join(__dirname, '../admin-ui/dist'),
+      //   extensions: [
+      //     // ManualCustomerChannelPlugin.ui,
+      //     // {
+      //     //   id: 'manual-admin',
+      //     //   extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
+      //     //   routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
+      //     //   providers: ['providers.ts'],
+      //     // },
+      //     // BannerPlugin.ui,
+      //     // {
+      //     //   id: 'cms-banner',
+      //     //   extensionPath: path.join(__dirname, 'plugins/banner/ui'),
+      //     //   routes: [{ route: 'banner', filePath: 'routes.ts' }],
+      //     //   providers: ['providers.ts'],
+      //     // },
 
-        ],
+      //   ],
 
-        devMode: false,
-      }),
+      //   devMode: false,
+      // }),
     }),
 
 

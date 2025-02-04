@@ -1,7 +1,7 @@
 import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
 import * as path from 'path';
-import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
-import { BannerPlugin } from './plugins/banner/banner.plugin';
+// import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
+// import { BannerPlugin } from './plugins/banner/banner.plugin';
 
 compileUiExtensions({
     outputPath: path.join(__dirname, '../admin-ui'),

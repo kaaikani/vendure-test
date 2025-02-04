@@ -26,6 +26,8 @@ var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 const compiler_1 = require("@vendure/ui-devkit/compiler");
 const path = __importStar(require("path"));
+// import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
+// import { BannerPlugin } from './plugins/banner/banner.plugin';
 (_b = (_a = (0, compiler_1.compileUiExtensions)({
     outputPath: path.join(__dirname, '../admin-ui'),
     extensions: [

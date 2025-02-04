@@ -26,10 +26,25 @@ var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 const compiler_1 = require("@vendure/ui-devkit/compiler");
 const path = __importStar(require("path"));
+// import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
+// import { BannerPlugin } from './plugins/banner/banner.plugin';
 (_b = (_a = (0, compiler_1.compileUiExtensions)({
     outputPath: path.join(__dirname, '../admin-ui'),
     extensions: [
-    /* ... */
+    // ManualCustomerChannelPlugin.ui,
+    // {
+    // id: 'manual-admin',
+    // extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
+    // routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
+    // providers: ['providers.ts'],
+    // },
+    // BannerPlugin.ui,
+    // {
+    // id: 'cms-banner',
+    // extensionPath: path.join(__dirname, 'plugins/banner/ui'),
+    // routes: [{ route: 'banner', filePath: 'routes.ts' }],
+    // providers: ['providers.ts'],
+    // },
     ],
 })).compile) === null || _b === void 0 ? void 0 : _b.call(_a).then(() => {
     process.exit(0);

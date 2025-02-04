@@ -24,7 +24,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = void 0;
-const compiler_1 = require("@vendure/ui-devkit/compiler");
 const admin_ui_plugin_1 = require("@vendure/admin-ui-plugin");
 const asset_server_plugin_1 = require("@vendure/asset-server-plugin");
 const core_1 = require("@vendure/core");
@@ -41,8 +40,6 @@ const promotionPlugin_1 = require("./plugins/promotionPlugin");
 const shouldApply_1 = require("./customPromotionConditions/shouldApply");
 const channelPlugin_1 = require("./plugins/channelPlugin");
 const path = __importStar(require("path"));
-const manualadmincustomerchannel_plugin_1 = require("./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin");
-const banner_plugin_1 = require("./plugins/banner/banner.plugin"); // Import BannerPlugin
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
     apiOptions: {
@@ -104,7 +101,7 @@ exports.config = {
             outputPath: path.join(__dirname, '../static/email/test-emails'),
             route: 'mailbox',
             handlers: email_plugin_1.defaultEmailHandlers,
-            templatePath: path.join(__dirname, '../static/email/templates'),
+            templateLoader: new email_plugin_1.FileBasedTemplateLoader(path.join(__dirname, 'static/email/templates')), // ✅ Corrected
             globalTemplateVars: {
                 fromAddress: '"example" <noreply@example.com>',
                 verifyEmailAddressUrl: 'http://localhost:8080/verify',
@@ -119,30 +116,29 @@ exports.config = {
         customEventPlugin_1.CustomEventPlugin,
         customTokenPlugin_1.CustomTokenPlugin,
         collectionIsPrivate_1.CollectionIsPrivatePlugin,
-        manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin,
-        banner_plugin_1.BannerPlugin, // Add the BannerPlugin to the plugins array
         admin_ui_plugin_1.AdminUiPlugin.init({
             port: 3000,
-            route: 'admin',
-            app: (0, compiler_1.compileUiExtensions)({
-                outputPath: path.join(__dirname, '../admin-ui'),
-                extensions: [
-                    manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin.ui,
-                    {
-                        id: 'assign-customer',
-                        extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
-                        routes: [{ route: 'manual-1', filePath: 'routes.ts' }],
-                        providers: ['providers.ts'],
-                    },
-                    {
-                        id: 'banner-management', // You can use a custom ID for the Banner UI
-                        extensionPath: path.join(__dirname, 'plugins/banner/ui'), // Point to the UI folder of BannerPlugin
-                        routes: [{ route: 'banner', filePath: 'routes.ts' }], // Define your route and file path for banner UI
-                        providers: ['providers.ts'], // Add providers for banner UI
-                    },
-                ],
-                devMode: false,
-            }),
+            route: "admin",
+            // app: compileUiExtensions({
+            //   outputPath: path.join(__dirname, '../admin-ui/dist'),
+            //   extensions: [
+            //     // ManualCustomerChannelPlugin.ui,
+            //     // {
+            //     //   id: 'manual-admin',
+            //     //   extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
+            //     //   routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
+            //     //   providers: ['providers.ts'],
+            //     // },
+            //     // BannerPlugin.ui,
+            //     // {
+            //     //   id: 'cms-banner',
+            //     //   extensionPath: path.join(__dirname, 'plugins/banner/ui'),
+            //     //   routes: [{ route: 'banner', filePath: 'routes.ts' }],
+            //     //   providers: ['providers.ts'],
+            //     // },
+            //   ],
+            //   devMode: false,
+            // }),
         }),
     ],
     orderOptions: {
