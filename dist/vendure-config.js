@@ -40,6 +40,10 @@ const promotionPlugin_1 = require("./plugins/promotionPlugin");
 const shouldApply_1 = require("./customPromotionConditions/shouldApply");
 const channelPlugin_1 = require("./plugins/channelPlugin");
 const path = __importStar(require("path"));
+// import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
+const banner_plugin_1 = require("./plugins/banner/banner.plugin");
+const manualadmincustomerchannel_plugin_1 = require("./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin");
+const IS_PROD = path.basename(__dirname) === 'dist';
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
     apiOptions: {
@@ -92,22 +96,31 @@ exports.config = {
         asset_server_plugin_1.AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, '../static/assets'),
-            assetUrlPrefix: IS_DEV ? undefined : 'https://www.my-shop.com/assets',
+            assetUrlPrefix: IS_DEV ? undefined : '/assets',
         }),
         core_1.DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
         core_1.DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
         email_plugin_1.EmailPlugin.init({
             devMode: true,
-            outputPath: path.join(__dirname, '../static/email/test-emails'),
-            route: 'mailbox',
+            outputPath: path.join(__dirname, "../static/email/test-emails"),
+            route: "mailbox",
             handlers: email_plugin_1.defaultEmailHandlers,
-            templateLoader: new email_plugin_1.FileBasedTemplateLoader(path.join(__dirname, 'static/email/templates')), // ✅ Corrected
+            templatePath: path.join(__dirname, "../static/email/templates"),
             globalTemplateVars: {
+                // The following variables will change depending on your storefront implementation.
+                // Here we are assuming a storefront running at http://localhost:8080.
                 fromAddress: '"example" <noreply@example.com>',
-                verifyEmailAddressUrl: 'http://localhost:8080/verify',
-                passwordResetUrl: 'http://localhost:8080/password-reset',
-                changeEmailAddressUrl: 'http://localhost:8080/verify-email-address-change',
+                verifyEmailAddressUrl: "http://localhost:8080/verify",
+                passwordResetUrl: "http://localhost:8080/password-reset",
+                changeEmailAddressUrl: "http://localhost:8080/verify-email-address-change",
             },
+        }),
+        admin_ui_plugin_1.AdminUiPlugin.init({
+            port: 3002,
+            app: {
+                path: path.join(__dirname, '../admin-ui/dist'),
+            },
+            route: 'admin'
         }),
         channelPlugin_1.ChannelPlugin,
         checkUniquePhonePlugin_1.CheckUniquePhonePlugin,
@@ -116,30 +129,8 @@ exports.config = {
         customEventPlugin_1.CustomEventPlugin,
         customTokenPlugin_1.CustomTokenPlugin,
         collectionIsPrivate_1.CollectionIsPrivatePlugin,
-        admin_ui_plugin_1.AdminUiPlugin.init({
-            port: 3000,
-            route: "admin",
-            // app: compileUiExtensions({
-            //   outputPath: path.join(__dirname, '../admin-ui/dist'),
-            //   extensions: [
-            //     // ManualCustomerChannelPlugin.ui,
-            //     // {
-            //     //   id: 'manual-admin',
-            //     //   extensionPath: path.join(__dirname, 'plugins/manualadmincustomerchannel/ui'),
-            //     //   routes: [{ route: 'manualadmincustomerchannel', filePath: 'routes.ts' }],
-            //     //   providers: ['providers.ts'],
-            //     // },
-            //     // BannerPlugin.ui,
-            //     // {
-            //     //   id: 'cms-banner',
-            //     //   extensionPath: path.join(__dirname, 'plugins/banner/ui'),
-            //     //   routes: [{ route: 'banner', filePath: 'routes.ts' }],
-            //     //   providers: ['providers.ts'],
-            //     // },
-            //   ],
-            //   devMode: false,
-            // }),
-        }),
+        manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin,
+        banner_plugin_1.BannerPlugin,
     ],
     orderOptions: {
         process: [core_1.defaultOrderProcess, product_delivered_notification_process_1.productDeliveredNotificationProcess, order_canceled_notification_process_1.orderCanceledNotificationProcess],
