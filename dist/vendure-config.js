@@ -27,6 +27,7 @@ exports.config = void 0;
 const admin_ui_plugin_1 = require("@vendure/admin-ui-plugin");
 const asset_server_plugin_1 = require("@vendure/asset-server-plugin");
 const core_1 = require("@vendure/core");
+const bullmq_1 = require("@vendure/job-queue-plugin/package/bullmq");
 const email_plugin_1 = require("@vendure/email-plugin");
 require("dotenv/config");
 const order_canceled_notification_process_1 = require("./customOrderProcess/order-canceled-notification-process");
@@ -43,9 +44,9 @@ const path = __importStar(require("path"));
 // import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 const banner_plugin_1 = require("./plugins/banner/banner.plugin");
 const manualadmincustomerchannel_plugin_1 = require("./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin");
-const IS_PROD = path.basename(__dirname) === 'dist';
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
+    // logger: new DefaultLogger({ level: LogLevel.Verbose }),
     apiOptions: {
         port: 3000,
         adminApiPath: 'admin-api',
@@ -93,12 +94,65 @@ exports.config = {
         promotionConditions: [...core_1.defaultPromotionConditions, shouldApply_1.shouldApplyCouponcode],
     },
     plugins: [
+        //Default AssetServerPlugin
+        // AssetServerPlugin.init({
+        //   route: 'assets',
+        //   assetUploadDir: path.join(__dirname, '../static/assets'),
+        //   assetUrlPrefix: IS_DEV ? undefined : '/assets',
+        // }),
+        // AWS S3 AssetServerPlugin
+        // AssetServerPlugin.init({
+        //   route: 'assets', // This is the internal route
+        //   assetUploadDir: path.join(__dirname, '../static/assets'),
+        //   namingStrategy: new DefaultAssetNamingStrategy(),
+        //   storageStrategyFactory: configureS3AssetStorage({
+        //     bucket: 'cloudflare-kaaikani',
+        //     credentials: {
+        //       accessKeyId: process.env.ACCESS_KEY_ID!,
+        //       secretAccessKey: process.env.SECRET_ACCESS_KEY!,
+        //     },
+        //     nativeS3Configuration: {
+        //       region: 'us-east-1',
+        //     },
+        //   }),
+        //   assetUrlPrefix: 'https://cdn.kaaikanistore.com/assets', // 🔹 Point this to Cloudflare
+        // }),  
         asset_server_plugin_1.AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, '../static/assets'),
-            assetUrlPrefix: IS_DEV ? undefined : '/assets',
+            namingStrategy: new core_1.DefaultAssetNamingStrategy(),
+            storageStrategyFactory: (0, asset_server_plugin_1.configureS3AssetStorage)({
+                bucket: 'cdn.kaaikanistore.com',
+                credentials: {
+                    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                },
+                nativeS3Configuration: {
+                    region: 'ap-south-1',
+                },
+            }),
+            assetUrlPrefix: 'cdn.kaaikanistore.com/',
         }),
-        core_1.DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
+        // DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
+        bullmq_1.BullMQJobQueuePlugin.init({
+            connection: {
+                host: '127.0.0.1', // Ensure Redis is running on this address
+                port: 6379,
+                maxRetriesPerRequest: null, // ✅ Required to avoid the error
+            },
+            workerOptions: {
+                concurrency: 10,
+                // removeOnComplete: { count: 500 },
+                // removeOnFail: { age: 60 * 60 * 24 * 7, count: 1000 },
+            },
+            queueOptions: {
+                prefix: 'vendure',
+                defaultJobOptions: {
+                    attempts: 3, // Retry failed jobs 3 times
+                    backoff: { type: 'exponential', delay: 1000 },
+                },
+            },
+        }),
         core_1.DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
         email_plugin_1.EmailPlugin.init({
             devMode: true,
@@ -131,6 +185,9 @@ exports.config = {
         collectionIsPrivate_1.CollectionIsPrivatePlugin,
         manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin,
         banner_plugin_1.BannerPlugin,
+        // StockMonitoringPlugin.init({
+        //   threshold: 10,
+        // }),
     ],
     orderOptions: {
         process: [core_1.defaultOrderProcess, product_delivered_notification_process_1.productDeliveredNotificationProcess, order_canceled_notification_process_1.orderCanceledNotificationProcess],

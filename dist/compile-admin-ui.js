@@ -23,6 +23,7 @@ function customAdminUi(options) {
             extensions: [
                 banner_plugin_1.BannerPlugin.UiExtensions,
                 manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin.UiExtensions,
+                // StockMonitoringPlugin.ui,
             ],
             devMode: options.devMode,
         });

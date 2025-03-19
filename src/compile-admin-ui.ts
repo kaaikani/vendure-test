@@ -2,7 +2,7 @@ import { compileUiExtensions, setBranding } from "@vendure/ui-devkit/compiler";
 import path from "path";
 import { BannerPlugin } from "./plugins/banner/banner.plugin";
 import { ManualCustomerChannelPlugin } from "./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin";
-
+import { StockMonitoringPlugin } from '@pinelab/vendure-plugin-stock-monitoring';
 
 if (require.main === module) {
   // Called directly from command line
@@ -24,6 +24,7 @@ export function customAdminUi(options: {
       extensions: [
         BannerPlugin.UiExtensions,
         ManualCustomerChannelPlugin.UiExtensions,
+        // StockMonitoringPlugin.ui,
         
       ],
       devMode: options.devMode,

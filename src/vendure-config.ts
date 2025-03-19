@@ -1,5 +1,5 @@
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
-import { AssetServerPlugin } from '@vendure/asset-server-plugin';
+import { AssetServerPlugin, configureS3AssetStorage, S3AssetStorageStrategy } from '@vendure/asset-server-plugin';
 import {
   DefaultJobQueuePlugin,
   DefaultSearchPlugin,
@@ -7,7 +7,11 @@ import {
   defaultPromotionConditions,
   defaultOrderProcess,
   dummyPaymentHandler,
+  DefaultAssetNamingStrategy,
+  DefaultLogger,
+  LogLevel,
 } from '@vendure/core';
+import { BullMQJobQueuePlugin } from '@vendure/job-queue-plugin/package/bullmq';
 import { EmailPlugin, defaultEmailHandlers } from '@vendure/email-plugin';
 import 'dotenv/config';
 import { orderCanceledNotificationProcess } from './customOrderProcess/order-canceled-notification-process';
@@ -20,18 +24,19 @@ import { CollectionIsPrivatePlugin } from './plugins/collectionIsPrivate';
 import { PromotionPlugin } from './plugins/promotionPlugin';
 import { shouldApplyCouponcode } from './customPromotionConditions/shouldApply';
 import { ChannelPlugin } from './plugins/channelPlugin';
-
+import { Request } from 'express';
 import * as path from 'path';
 // import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 import { BannerPlugin } from './plugins/banner/banner.plugin';
-import { customAdminUi } from './compile-admin-ui';
 import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 
-const IS_PROD = path.basename(__dirname) === 'dist';
-
+import { StockMonitoringPlugin } from '@pinelab/vendure-plugin-stock-monitoring';
 const IS_DEV = process.env.APP_ENV === 'dev';
 
+
+
 export const config: VendureConfig = {
+  // logger: new DefaultLogger({ level: LogLevel.Verbose }),
   apiOptions: {
     port: 3000,
     adminApiPath: 'admin-api',
@@ -79,12 +84,69 @@ export const config: VendureConfig = {
     promotionConditions: [...defaultPromotionConditions, shouldApplyCouponcode],
   },
   plugins: [
+    //Default AssetServerPlugin
+
+    // AssetServerPlugin.init({
+    //   route: 'assets',
+    //   assetUploadDir: path.join(__dirname, '../static/assets'),
+    //   assetUrlPrefix: IS_DEV ? undefined : '/assets',
+    // }),
+
+      
     AssetServerPlugin.init({
       route: 'assets',
       assetUploadDir: path.join(__dirname, '../static/assets'),
-      assetUrlPrefix: IS_DEV ? undefined : '/assets',
+      namingStrategy: new DefaultAssetNamingStrategy(),
+      storageStrategyFactory: configureS3AssetStorage({
+        bucket: 'cdn.kaaikanistore.com',
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        },
+        nativeS3Configuration: {
+          region: 'ap-south-1',
+        },
+      }),
+      assetUrlPrefix: 'cdn.kaaikanistore.com/', 
+
     }),
-    DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
+    
+    
+
+   
+      
+
+
+
+
+
+
+
+
+
+    // DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
+    BullMQJobQueuePlugin.init({
+      connection: {
+        host: '127.0.0.1',  // Ensure Redis is running on this address
+        port: 6379,
+        maxRetriesPerRequest: null,  // ✅ Required to avoid the error
+      },
+      workerOptions: {
+        concurrency: 10,
+        // removeOnComplete: { count: 500 },
+        // removeOnFail: { age: 60 * 60 * 24 * 7, count: 1000 },
+      },
+      queueOptions: {
+        prefix: 'vendure',
+        defaultJobOptions: {
+          attempts: 3, // Retry failed jobs 3 times
+          backoff: { type: 'exponential', delay: 1000 },
+        },
+      },
+    }),
+
+
+
     DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
     EmailPlugin.init({
       devMode: true,
@@ -109,7 +171,7 @@ export const config: VendureConfig = {
       },
       route: 'admin'
     }),
-  
+
     ChannelPlugin,
     CheckUniquePhonePlugin,
     PromotionPlugin,
@@ -119,6 +181,9 @@ export const config: VendureConfig = {
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
     BannerPlugin,
+    // StockMonitoringPlugin.init({
+    //   threshold: 10,
+    // }),
 
 
   ],
@@ -126,3 +191,4 @@ export const config: VendureConfig = {
     process: [defaultOrderProcess, productDeliveredNotificationProcess, orderCanceledNotificationProcess],
   },
 };
+
