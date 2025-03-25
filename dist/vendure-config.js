@@ -100,29 +100,12 @@ exports.config = {
         //   assetUploadDir: path.join(__dirname, '../static/assets'),
         //   assetUrlPrefix: IS_DEV ? undefined : '/assets',
         // }),
-        // AWS S3 AssetServerPlugin
-        // AssetServerPlugin.init({
-        //   route: 'assets', // This is the internal route
-        //   assetUploadDir: path.join(__dirname, '../static/assets'),
-        //   namingStrategy: new DefaultAssetNamingStrategy(),
-        //   storageStrategyFactory: configureS3AssetStorage({
-        //     bucket: 'cloudflare-kaaikani',
-        //     credentials: {
-        //       accessKeyId: process.env.ACCESS_KEY_ID!,
-        //       secretAccessKey: process.env.SECRET_ACCESS_KEY!,
-        //     },
-        //     nativeS3Configuration: {
-        //       region: 'us-east-1',
-        //     },
-        //   }),
-        //   assetUrlPrefix: 'https://cdn.kaaikanistore.com/assets', // 🔹 Point this to Cloudflare
-        // }),  
         asset_server_plugin_1.AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, '../static/assets'),
             namingStrategy: new core_1.DefaultAssetNamingStrategy(),
             storageStrategyFactory: (0, asset_server_plugin_1.configureS3AssetStorage)({
-                bucket: 'cdn.kaaikanistore.com',
+                bucket: 'cdn.htagbilling.com',
                 credentials: {
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -131,25 +114,43 @@ exports.config = {
                     region: 'ap-south-1',
                 },
             }),
-            assetUrlPrefix: 'cdn.kaaikanistore.com/',
+            assetUrlPrefix: 'https://cdn.htagbilling.com/',
         }),
         // DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
+        // BullMQJobQueuePlugin.init({
+        //   connection: {
+        //     host: '127.0.0.1',
+        //     port: 6379,
+        //     maxRetriesPerRequest: null,  
+        //   },
+        // }),
         bullmq_1.BullMQJobQueuePlugin.init({
             connection: {
-                host: '127.0.0.1', // Ensure Redis is running on this address
+                host: '127.0.0.1',
                 port: 6379,
-                maxRetriesPerRequest: null, // ✅ Required to avoid the error
+                maxRetriesPerRequest: null,
+            },
+            setRetries: (queueName, job) => {
+                var _a;
+                if (queueName === 'send-email') {
+                    return 10; // Higher retries for 'send-email' jobs
+                }
+                return (_a = job.retries) !== null && _a !== void 0 ? _a : 3; // Default to 3 retries if not specified
+            },
+            setBackoff: () => {
+                return {
+                    type: 'exponential',
+                    delay: 10000,
+                };
             },
             workerOptions: {
-                concurrency: 10,
-                // removeOnComplete: { count: 500 },
-                // removeOnFail: { age: 60 * 60 * 24 * 7, count: 1000 },
-            },
-            queueOptions: {
-                prefix: 'vendure',
-                defaultJobOptions: {
-                    attempts: 3, // Retry failed jobs 3 times
-                    backoff: { type: 'exponential', delay: 1000 },
+                removeOnComplete: {
+                    age: 60 * 60 * 24 * 30,
+                    count: 5000,
+                },
+                removeOnFail: {
+                    age: 60 * 60 * 24 * 30,
+                    count: 1000,
                 },
             },
         }),

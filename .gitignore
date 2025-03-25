@@ -3,3 +3,4 @@ dist
 static/assets
 static/email/test-emails
 admin-ui/.angular/cache
+.env

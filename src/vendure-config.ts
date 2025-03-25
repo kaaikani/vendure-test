@@ -75,6 +75,7 @@ export const config: VendureConfig = {
     port: +process.env.DB_PORT,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
+ 
   },
   paymentOptions: {
     paymentMethodHandlers: [dummyPaymentHandler],
@@ -98,7 +99,7 @@ export const config: VendureConfig = {
       assetUploadDir: path.join(__dirname, '../static/assets'),
       namingStrategy: new DefaultAssetNamingStrategy(),
       storageStrategyFactory: configureS3AssetStorage({
-        bucket: 'cdn.kaaikanistore.com',
+        bucket: 'cdn.htagbilling.com',
         credentials: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
@@ -107,43 +108,55 @@ export const config: VendureConfig = {
           region: 'ap-south-1',
         },
       }),
-      assetUrlPrefix: 'cdn.kaaikanistore.com/', 
+      assetUrlPrefix: 'https://cdn.htagbilling.com/', 
 
     }),
     
-    
-
-   
-      
-
-
-
-
-
 
 
 
 
     // DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
-    BullMQJobQueuePlugin.init({
-      connection: {
-        host: '127.0.0.1',  // Ensure Redis is running on this address
-        port: 6379,
-        maxRetriesPerRequest: null,  // ✅ Required to avoid the error
-      },
-      workerOptions: {
-        concurrency: 10,
-        // removeOnComplete: { count: 500 },
-        // removeOnFail: { age: 60 * 60 * 24 * 7, count: 1000 },
-      },
-      queueOptions: {
-        prefix: 'vendure',
-        defaultJobOptions: {
-          attempts: 3, // Retry failed jobs 3 times
-          backoff: { type: 'exponential', delay: 1000 },
-        },
-      },
-    }),
+
+    // BullMQJobQueuePlugin.init({
+    //   connection: {
+    //     host: '127.0.0.1',
+    //     port: 6379,
+    //     maxRetriesPerRequest: null,  
+    //   },
+    // }),
+
+   
+BullMQJobQueuePlugin.init({
+  connection: {
+    host: '127.0.0.1',
+    port: 6379,
+    maxRetriesPerRequest: null,  
+  },
+  setRetries: (queueName, job) => {
+    if (queueName === 'send-email') {
+      return 10; // Higher retries for 'send-email' jobs
+    }
+    return job.retries ?? 3; // Default to 3 retries if not specified
+  },
+  setBackoff: () => {
+    return {
+      type: 'exponential',
+      delay: 10000,
+    };
+  },
+  workerOptions: {
+    removeOnComplete: {
+      age: 60 * 60 * 24 * 30, 
+      count: 5000, 
+    },
+    removeOnFail: {
+      age: 60 * 60 * 24 * 30, 
+      count: 1000, 
+    },
+  },
+}),
+    
 
 
 
