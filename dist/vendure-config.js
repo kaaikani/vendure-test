@@ -94,18 +94,12 @@ exports.config = {
         promotionConditions: [...core_1.defaultPromotionConditions, shouldApply_1.shouldApplyCouponcode],
     },
     plugins: [
-        //Default AssetServerPlugin
-        // AssetServerPlugin.init({
-        //   route: 'assets',
-        //   assetUploadDir: path.join(__dirname, '../static/assets'),
-        //   assetUrlPrefix: IS_DEV ? undefined : '/assets',
-        // }),
         asset_server_plugin_1.AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, '../static/assets'),
             namingStrategy: new core_1.DefaultAssetNamingStrategy(),
             storageStrategyFactory: (0, asset_server_plugin_1.configureS3AssetStorage)({
-                bucket: 'cdn.htagbilling.com',
+                bucket: 'cdn.kaaikani.co.in',
                 credentials: {
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -114,28 +108,22 @@ exports.config = {
                     region: 'ap-south-1',
                 },
             }),
-            assetUrlPrefix: 'https://cdn.htagbilling.com/',
+            assetUrlPrefix: 'https://cdn.kaaikani.co.in/',
         }),
-        // DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
-        // BullMQJobQueuePlugin.init({
-        //   connection: {
-        //     host: '127.0.0.1',
-        //     port: 6379,
-        //     maxRetriesPerRequest: null,  
-        //   },
-        // }),
         bullmq_1.BullMQJobQueuePlugin.init({
             connection: {
-                host: '127.0.0.1',
-                port: 6379,
+                host: process.env.REDIS_HOST,
+                port: Number(process.env.REDIS_PORT),
+                username: process.env.REDIS_USERNAME,
+                password: process.env.REDIS_PASSWORD,
                 maxRetriesPerRequest: null,
             },
             setRetries: (queueName, job) => {
                 var _a;
                 if (queueName === 'send-email') {
-                    return 10; // Higher retries for 'send-email' jobs
+                    return 10;
                 }
-                return (_a = job.retries) !== null && _a !== void 0 ? _a : 3; // Default to 3 retries if not specified
+                return (_a = job.retries) !== null && _a !== void 0 ? _a : 3;
             },
             setBackoff: () => {
                 return {
@@ -145,11 +133,11 @@ exports.config = {
             },
             workerOptions: {
                 removeOnComplete: {
-                    age: 60 * 60 * 24 * 30,
+                    age: 60 * 60 * 24 * 7,
                     count: 5000,
                 },
                 removeOnFail: {
-                    age: 60 * 60 * 24 * 30,
+                    age: 60 * 60 * 24 * 7,
                     count: 1000,
                 },
             },

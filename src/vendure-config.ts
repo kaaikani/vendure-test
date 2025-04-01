@@ -75,7 +75,7 @@ export const config: VendureConfig = {
     port: +process.env.DB_PORT,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
- 
+
   },
   paymentOptions: {
     paymentMethodHandlers: [dummyPaymentHandler],
@@ -85,21 +85,12 @@ export const config: VendureConfig = {
     promotionConditions: [...defaultPromotionConditions, shouldApplyCouponcode],
   },
   plugins: [
-    //Default AssetServerPlugin
-
-    // AssetServerPlugin.init({
-    //   route: 'assets',
-    //   assetUploadDir: path.join(__dirname, '../static/assets'),
-    //   assetUrlPrefix: IS_DEV ? undefined : '/assets',
-    // }),
-
-      
     AssetServerPlugin.init({
       route: 'assets',
       assetUploadDir: path.join(__dirname, '../static/assets'),
       namingStrategy: new DefaultAssetNamingStrategy(),
       storageStrategyFactory: configureS3AssetStorage({
-        bucket: 'cdn.htagbilling.com',
+        bucket: 'cdn.kaaikani.co.in',
         credentials: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
@@ -108,55 +99,43 @@ export const config: VendureConfig = {
           region: 'ap-south-1',
         },
       }),
-      assetUrlPrefix: 'https://cdn.htagbilling.com/', 
+      assetUrlPrefix: 'https://cdn.kaaikani.co.in/',
+
+      
 
     }),
-    
 
-
-
-
-    // DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
-
-    // BullMQJobQueuePlugin.init({
-    //   connection: {
-    //     host: '127.0.0.1',
-    //     port: 6379,
-    //     maxRetriesPerRequest: null,  
-    //   },
-    // }),
-
-   
-BullMQJobQueuePlugin.init({
-  connection: {
-    host: '127.0.0.1',
-    port: 6379,
-    maxRetriesPerRequest: null,  
-  },
-  setRetries: (queueName, job) => {
-    if (queueName === 'send-email') {
-      return 10; // Higher retries for 'send-email' jobs
-    }
-    return job.retries ?? 3; // Default to 3 retries if not specified
-  },
-  setBackoff: () => {
-    return {
-      type: 'exponential',
-      delay: 10000,
-    };
-  },
-  workerOptions: {
-    removeOnComplete: {
-      age: 60 * 60 * 24 * 30, 
-      count: 5000, 
-    },
-    removeOnFail: {
-      age: 60 * 60 * 24 * 30, 
-      count: 1000, 
-    },
-  },
-}),
-    
+    BullMQJobQueuePlugin.init({
+      connection: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        username: process.env.REDIS_USERNAME,  
+        password: process.env.REDIS_PASSWORD,
+        maxRetriesPerRequest: null,
+      },
+      setRetries: (queueName, job) => {
+        if (queueName === 'send-email') {
+          return 10; 
+        }
+        return job.retries ?? 3;
+      },
+      setBackoff: () => {
+        return {
+          type: 'exponential',
+          delay: 10000,
+        };
+      },
+      workerOptions: {
+        removeOnComplete: {
+          age: 60 * 60 * 24 * 7 ,
+          count: 5000,
+        },
+        removeOnFail: {
+          age: 60 * 60 * 24 * 7,
+          count: 1000,
+        },
+      },
+    }),
 
 
 
