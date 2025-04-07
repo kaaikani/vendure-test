@@ -1,5 +1,5 @@
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
-import { AssetServerPlugin, configureS3AssetStorage, S3AssetStorageStrategy } from '@vendure/asset-server-plugin';
+import { AssetServerPlugin, configureS3AssetStorage, S3AssetStorageStrategy, SharpAssetPreviewStrategy } from '@vendure/asset-server-plugin';
 import {
   DefaultJobQueuePlugin,
   DefaultSearchPlugin,
@@ -30,7 +30,10 @@ import * as path from 'path';
 import { BannerPlugin } from './plugins/banner/banner.plugin';
 import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 
-import { StockMonitoringPlugin } from '@pinelab/vendure-plugin-stock-monitoring';
+import { configureCustomS3AssetStorage } from './cdn-aware-s3-storage';
+
+
+
 const IS_DEV = process.env.APP_ENV === 'dev';
 
 
@@ -84,12 +87,31 @@ export const config: VendureConfig = {
   promotionOptions: {
     promotionConditions: [...defaultPromotionConditions, shouldApplyCouponcode],
   },
+
   plugins: [
+    // AssetServerPlugin.init({
+    //   route: 'assets',
+    //   assetUploadDir: path.join(__dirname, '../static/assets'),
+    //   presets: [
+    //     { name: 'small', width: 300, height: 300, mode: 'resize' },
+    //   ],
+    //   namingStrategy: new DefaultAssetNamingStrategy(),
+    //   storageStrategyFactory: configureCustomS3AssetStorage({
+    //     bucket: 'cdn.kaaikani.co.in',
+    //     credentials: {
+    //       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    //     },
+    //     nativeS3Configuration: {
+    //       region: 'ap-south-1',
+    //     },
+    //   }),
+    //   assetUrlPrefix: 'https://cdn.kaaikani.co.in/',
+    // }),
     AssetServerPlugin.init({
       route: 'assets',
-      assetUploadDir: path.join(__dirname, '../static/assets'),
-      namingStrategy: new DefaultAssetNamingStrategy(),
-      storageStrategyFactory: configureS3AssetStorage({
+      assetUploadDir: path.join(__dirname, 'assets'),
+      storageStrategyFactory: configureCustomS3AssetStorage({
         bucket: 'cdn.kaaikani.co.in',
         credentials: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -99,23 +121,27 @@ export const config: VendureConfig = {
           region: 'ap-south-1',
         },
       }),
-      assetUrlPrefix: 'https://cdn.kaaikani.co.in/',
-
-      
-
+      assetUrlPrefix: (_ctx, _identifier) => {
+        return '';
+      },
+      // assetUrlPrefix: 'https://cdn.kaaikanistore.com/',
+   
     }),
+
+
+
 
     BullMQJobQueuePlugin.init({
       connection: {
         host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT),
-        username: process.env.REDIS_USERNAME,  
+        username: process.env.REDIS_USERNAME,
         password: process.env.REDIS_PASSWORD,
         maxRetriesPerRequest: null,
       },
       setRetries: (queueName, job) => {
         if (queueName === 'send-email') {
-          return 10; 
+          return 10;
         }
         return job.retries ?? 3;
       },
@@ -127,7 +153,7 @@ export const config: VendureConfig = {
       },
       workerOptions: {
         removeOnComplete: {
-          age: 60 * 60 * 24 * 7 ,
+          age: 60 * 60 * 24 * 7,
           count: 5000,
         },
         removeOnFail: {
@@ -173,6 +199,7 @@ export const config: VendureConfig = {
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
     BannerPlugin,
+    // ImageVariantPreloaderPlugin,
     // StockMonitoringPlugin.init({
     //   threshold: 10,
     // }),
