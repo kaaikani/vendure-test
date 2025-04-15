@@ -31,6 +31,7 @@ import { BannerPlugin } from './plugins/banner/banner.plugin';
 import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 
 import { configureCustomS3AssetStorage } from './cdn-aware-s3-storage';
+import { CustomerChannelPlugin } from './plugins/customer-channel-plugin';
 
 
 
@@ -66,8 +67,8 @@ export const config: VendureConfig = {
     cookieOptions: {
       secret: process.env.COOKIE_SECRET,
     },
-    requireVerification: false,
-  },
+    requireVerification: true,
+    },
   dbConnectionOptions: {
     type: 'mysql',
     synchronize: true,
@@ -189,7 +190,7 @@ export const config: VendureConfig = {
       },
       route: 'admin'
     }),
-
+    CustomerChannelPlugin,
     ChannelPlugin,
     CheckUniquePhonePlugin,
     PromotionPlugin,

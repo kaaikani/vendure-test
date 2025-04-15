@@ -45,6 +45,7 @@ const path = __importStar(require("path"));
 const banner_plugin_1 = require("./plugins/banner/banner.plugin");
 const manualadmincustomerchannel_plugin_1 = require("./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin");
 const cdn_aware_s3_storage_1 = require("./cdn-aware-s3-storage");
+const customer_channel_plugin_1 = require("./plugins/customer-channel-plugin");
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
     // logger: new DefaultLogger({ level: LogLevel.Verbose }),
@@ -74,7 +75,7 @@ exports.config = {
         cookieOptions: {
             secret: process.env.COOKIE_SECRET,
         },
-        requireVerification: false,
+        requireVerification: true,
     },
     dbConnectionOptions: {
         type: 'mysql',
@@ -187,6 +188,7 @@ exports.config = {
             },
             route: 'admin'
         }),
+        customer_channel_plugin_1.CustomerChannelPlugin,
         channelPlugin_1.ChannelPlugin,
         checkUniquePhonePlugin_1.CheckUniquePhonePlugin,
         promotionPlugin_1.PromotionPlugin,
