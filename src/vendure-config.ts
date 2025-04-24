@@ -1,15 +1,12 @@
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
-import { AssetServerPlugin, configureS3AssetStorage, S3AssetStorageStrategy, SharpAssetPreviewStrategy } from '@vendure/asset-server-plugin';
+import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import {
-  DefaultJobQueuePlugin,
   DefaultSearchPlugin,
   VendureConfig,
   defaultPromotionConditions,
   defaultOrderProcess,
   dummyPaymentHandler,
-  DefaultAssetNamingStrategy,
-  DefaultLogger,
-  LogLevel,
+  NativeAuthenticationStrategy,
 } from '@vendure/core';
 import { BullMQJobQueuePlugin } from '@vendure/job-queue-plugin/package/bullmq';
 import { EmailPlugin, defaultEmailHandlers } from '@vendure/email-plugin';
@@ -24,14 +21,14 @@ import { CollectionIsPrivatePlugin } from './plugins/collectionIsPrivate';
 import { PromotionPlugin } from './plugins/promotionPlugin';
 import { shouldApplyCouponcode } from './customPromotionConditions/shouldApply';
 import { ChannelPlugin } from './plugins/channelPlugin';
-import { Request } from 'express';
 import * as path from 'path';
-// import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 import { BannerPlugin } from './plugins/banner/banner.plugin';
 import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 
 import { configureCustomS3AssetStorage } from './cdn-aware-s3-storage';
 import { CustomerChannelPlugin } from './plugins/customer-channel-plugin';
+import { PhoneOtpPlugin } from './plugins/otpmechanism/plugins/phone-otp.plugin';
+import { PhoneOtpAuthenticationStrategy } from './plugins/otpmechanism/strategies/phone-otp.strategy';
 
 
 
@@ -64,11 +61,15 @@ export const config: VendureConfig = {
       identifier: process.env.SUPERADMIN_USERNAME,
       password: process.env.SUPERADMIN_PASSWORD,
     },
+    shopAuthenticationStrategy: [
+      new PhoneOtpAuthenticationStrategy(),
+      new NativeAuthenticationStrategy(),
+    ],
     cookieOptions: {
       secret: process.env.COOKIE_SECRET,
     },
     requireVerification: true,
-    },
+      },
   dbConnectionOptions: {
     type: 'mysql',
     synchronize: true,
@@ -90,25 +91,7 @@ export const config: VendureConfig = {
   },
 
   plugins: [
-    // AssetServerPlugin.init({
-    //   route: 'assets',
-    //   assetUploadDir: path.join(__dirname, '../static/assets'),
-    //   presets: [
-    //     { name: 'small', width: 300, height: 300, mode: 'resize' },
-    //   ],
-    //   namingStrategy: new DefaultAssetNamingStrategy(),
-    //   storageStrategyFactory: configureCustomS3AssetStorage({
-    //     bucket: 'cdn.kaaikani.co.in',
-    //     credentials: {
-    //       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    //     },
-    //     nativeS3Configuration: {
-    //       region: 'ap-south-1',
-    //     },
-    //   }),
-    //   assetUrlPrefix: 'https://cdn.kaaikani.co.in/',
-    // }),
+
     AssetServerPlugin.init({
       route: 'assets',
       assetUploadDir: path.join(__dirname, 'assets'),
@@ -174,9 +157,7 @@ export const config: VendureConfig = {
       handlers: defaultEmailHandlers,
       templatePath: path.join(__dirname, "../static/email/templates"),
       globalTemplateVars: {
-        // The following variables will change depending on your storefront implementation.
-        // Here we are assuming a storefront running at http://localhost:8080.
-        fromAddress: '"example" <noreply@example.com>',
+            fromAddress: '"example" <noreply@example.com>',
         verifyEmailAddressUrl: "http://localhost:8080/verify",
         passwordResetUrl: "http://localhost:8080/password-reset",
         changeEmailAddressUrl:
@@ -191,6 +172,7 @@ export const config: VendureConfig = {
       route: 'admin'
     }),
     CustomerChannelPlugin,
+    PhoneOtpPlugin,
     ChannelPlugin,
     CheckUniquePhonePlugin,
     PromotionPlugin,
@@ -200,10 +182,7 @@ export const config: VendureConfig = {
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
     BannerPlugin,
-    // ImageVariantPreloaderPlugin,
-    // StockMonitoringPlugin.init({
-    //   threshold: 10,
-    // }),
+ 
 
 
   ],

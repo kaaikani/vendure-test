@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "jsx": "react",
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -15,6 +14,10 @@
     "outDir": "./dist",
     "baseUrl": "./"
   },
+  "include": [
+    "src/**/*.ts",
+    "node_modules/otplib"
+  ],
   "exclude": [
     "node_modules",
     "migration.ts",

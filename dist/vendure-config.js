@@ -41,11 +41,12 @@ const promotionPlugin_1 = require("./plugins/promotionPlugin");
 const shouldApply_1 = require("./customPromotionConditions/shouldApply");
 const channelPlugin_1 = require("./plugins/channelPlugin");
 const path = __importStar(require("path"));
-// import { ManualCustomerChannelPlugin } from './plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin';
 const banner_plugin_1 = require("./plugins/banner/banner.plugin");
 const manualadmincustomerchannel_plugin_1 = require("./plugins/manualadmincustomerchannel/manualadmincustomerchannel.plugin");
 const cdn_aware_s3_storage_1 = require("./cdn-aware-s3-storage");
 const customer_channel_plugin_1 = require("./plugins/customer-channel-plugin");
+const phone_otp_plugin_1 = require("./plugins/otpmechanism/plugins/phone-otp.plugin");
+const phone_otp_strategy_1 = require("./plugins/otpmechanism/strategies/phone-otp.strategy");
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
     // logger: new DefaultLogger({ level: LogLevel.Verbose }),
@@ -72,6 +73,10 @@ exports.config = {
             identifier: process.env.SUPERADMIN_USERNAME,
             password: process.env.SUPERADMIN_PASSWORD,
         },
+        shopAuthenticationStrategy: [
+            new phone_otp_strategy_1.PhoneOtpAuthenticationStrategy(),
+            new core_1.NativeAuthenticationStrategy(),
+        ],
         cookieOptions: {
             secret: process.env.COOKIE_SECRET,
         },
@@ -96,25 +101,6 @@ exports.config = {
         promotionConditions: [...core_1.defaultPromotionConditions, shouldApply_1.shouldApplyCouponcode],
     },
     plugins: [
-        // AssetServerPlugin.init({
-        //   route: 'assets',
-        //   assetUploadDir: path.join(__dirname, '../static/assets'),
-        //   presets: [
-        //     { name: 'small', width: 300, height: 300, mode: 'resize' },
-        //   ],
-        //   namingStrategy: new DefaultAssetNamingStrategy(),
-        //   storageStrategyFactory: configureCustomS3AssetStorage({
-        //     bucket: 'cdn.kaaikani.co.in',
-        //     credentials: {
-        //       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        //     },
-        //     nativeS3Configuration: {
-        //       region: 'ap-south-1',
-        //     },
-        //   }),
-        //   assetUrlPrefix: 'https://cdn.kaaikani.co.in/',
-        // }),
         asset_server_plugin_1.AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, 'assets'),
@@ -173,8 +159,6 @@ exports.config = {
             handlers: email_plugin_1.defaultEmailHandlers,
             templatePath: path.join(__dirname, "../static/email/templates"),
             globalTemplateVars: {
-                // The following variables will change depending on your storefront implementation.
-                // Here we are assuming a storefront running at http://localhost:8080.
                 fromAddress: '"example" <noreply@example.com>',
                 verifyEmailAddressUrl: "http://localhost:8080/verify",
                 passwordResetUrl: "http://localhost:8080/password-reset",
@@ -189,6 +173,7 @@ exports.config = {
             route: 'admin'
         }),
         customer_channel_plugin_1.CustomerChannelPlugin,
+        phone_otp_plugin_1.PhoneOtpPlugin,
         channelPlugin_1.ChannelPlugin,
         checkUniquePhonePlugin_1.CheckUniquePhonePlugin,
         promotionPlugin_1.PromotionPlugin,
@@ -198,10 +183,6 @@ exports.config = {
         collectionIsPrivate_1.CollectionIsPrivatePlugin,
         manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin,
         banner_plugin_1.BannerPlugin,
-        // ImageVariantPreloaderPlugin,
-        // StockMonitoringPlugin.init({
-        //   threshold: 10,
-        // }),
     ],
     orderOptions: {
         process: [core_1.defaultOrderProcess, product_delivered_notification_process_1.productDeliveredNotificationProcess, order_canceled_notification_process_1.orderCanceledNotificationProcess],

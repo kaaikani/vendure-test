@@ -30,7 +30,7 @@ let ChannelResolver = class ChannelResolver {
     }
     async getChannelList(ctx) {
         const result = await this.channelService.findAll(ctx);
-        return result.items; // Access the items array from the PaginatedList
+        return result.items.filter(channel => channel.token !== 'd7476xruz8xpzmkjsa6l');
     }
 };
 __decorate([
