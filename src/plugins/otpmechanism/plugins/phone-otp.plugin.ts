@@ -11,7 +11,9 @@ import { AuthenticationPhoneOtp } from '../entities/authentication-phone-otp.ent
 // Define schema extension for the mutation
 const schemaExtension = gql`
   extend type Mutation {
-    sendPhoneOtp(phoneNumber: String!): Boolean
+    sendPhoneOtp(phoneNumber: String!): String
+    resendPhoneOtp(phoneNumber: String!): String
+        verifyPhoneOtp(phoneNumber: String!, code: String!): Boolean
   }
 `;
 

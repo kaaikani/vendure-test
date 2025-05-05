@@ -15,7 +15,7 @@ export class PhoneOtpService implements OnApplicationBootstrap {
 
   onApplicationBootstrap() {}
 
-  async sendOtp(ctx: RequestContext, phoneNumber: string): Promise<boolean> {
+  async sendOtp(ctx: RequestContext, phoneNumber: string): Promise<string | null> {
     totp.options = { digits: 4 };
     const token = totp.generate(`${process.env.TOTP_SALT}:${phoneNumber}`);
   
@@ -24,7 +24,6 @@ export class PhoneOtpService implements OnApplicationBootstrap {
     try {
       const repository = this.connection.getRepository(ctx, AuthenticationPhoneOtp);
   
-      // Check if the phoneNumber already exists
       let phoneOtp = await repository.findOne({ where: { phoneNumber } });
   
       if (!phoneOtp) {
@@ -34,32 +33,63 @@ export class PhoneOtpService implements OnApplicationBootstrap {
   
       phoneOtp.code = token;
   
-      // Check that we are saving the OTP correctly
       console.log('Saving OTP to DB:', phoneOtp);
       await repository.save(phoneOtp);
   
-      // Send OTP via SMS
-    //   const sms = new SmsService(
-    //     "64638d10d6fc0577471d20a2", // templateId
-    //     phoneNumber, // phoneNumber
-    //     "OTP", // orderType, can be customized
-    //     { OTP: token } ,
-    //   );
-    const sms = new SmsService(
-        "64638d10d6fc0577471d20a2", 
-        phoneNumber,                // phone number
-        { OTP: token }              // variables object
+      const sms = new SmsService(
+        "64638d10d6fc0577471d20a2", // Template ID
+        phoneNumber,
+        { OTP: token }
       );
-      
+  
       const smsResult = await sms.sendSms();
       console.log('SMS Sent:', smsResult);
   
-      return true;
+      return token;
     } catch (error) {
       console.error('Error in sendOtp:', error);
-      return false;
+      return null;
     }
   }
+  
+  async resendOtp(ctx: RequestContext, phoneNumber: string): Promise<string | null> {
+    totp.options = { digits: 4 };
+    const token = totp.generate(`${process.env.TOTP_SALT}:${phoneNumber}`);
+  
+    console.log('Generated Resend OTP:', token);
+  
+    try {
+      const repository = this.connection.getRepository(ctx, AuthenticationPhoneOtp);
+  
+      let phoneOtp = await repository.findOne({ where: { phoneNumber } });
+  
+      if (!phoneOtp) {
+        phoneOtp = new AuthenticationPhoneOtp();
+        phoneOtp.phoneNumber = phoneNumber;
+      }
+  
+      phoneOtp.code = token;
+  
+      console.log('Saving Resend OTP to DB:', phoneOtp);
+      await repository.save(phoneOtp);
+  
+      const sms = new SmsService(
+        "646b079bd6fc050f4533f312", // Different template ID for resend
+        phoneNumber,
+        { number: token }
+      );
+  
+      const smsResult = await sms.sendSms();
+      console.log('Resend SMS Sent:', smsResult);
+  
+      return token;
+    } catch (error) {
+      console.error('Error in resendOtp:', error);
+      return null;
+    }
+  }
+  
+  
   
 
   async verifyOtp(ctx: RequestContext, phoneNumber: string, code: string) {

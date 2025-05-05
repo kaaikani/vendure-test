@@ -10,6 +10,7 @@ export type PhoneAuthData = {
   code: string;
   firstName: string;
   lastName: string;
+  emailAddress: string;
 };
  
 @Injectable()
@@ -34,6 +35,7 @@ export class PhoneOtpAuthenticationStrategy implements AuthenticationStrategy {
         code: String!
          firstName: String
       lastName: String
+      emailAddress: String! 
       }
     `;
   }
@@ -57,8 +59,8 @@ export class PhoneOtpAuthenticationStrategy implements AuthenticationStrategy {
         verified: true,
         firstName: data.firstName ,
         lastName: data.lastName ,
-      
-        emailAddress: `${data.phoneNumber}@kaikani.com`,
+        emailAddress: data.emailAddress,
+        // emailAddress: `${data.phoneNumber}@kaikani.com`,
       });
       const customer = await this.customerService.findOneByUserId(
         ctx,

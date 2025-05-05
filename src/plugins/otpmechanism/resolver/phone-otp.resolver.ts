@@ -7,11 +7,20 @@ import { PhoneOtpService } from '../services/phone-otp.service';
 export class PhoneOtpResolver {
   constructor(private phoneOtpService: PhoneOtpService) {}
 
-  @Mutation(() => Boolean)
-  async sendPhoneOtp(
+  @Mutation()
+  sendPhoneOtp(@Ctx() ctx: RequestContext, @Args() args: { phoneNumber: string }): Promise<string | null> {
+    return this.phoneOtpService.sendOtp(ctx, args.phoneNumber);
+  }
+
+  @Mutation()
+  resendPhoneOtp(@Ctx() ctx: RequestContext, @Args() args: { phoneNumber: string }): Promise<string | null> {
+    return this.phoneOtpService.resendOtp(ctx, args.phoneNumber);
+  }
+  @Mutation()
+  async verifyPhoneOtp(
     @Ctx() ctx: RequestContext,
-    @Args('phoneNumber') phoneNumber: string
+    @Args() args: { phoneNumber: string; code: string }
   ): Promise<boolean> {
-    return this.phoneOtpService.sendOtp(ctx, phoneNumber);
+    return this.phoneOtpService.verifyOtp(ctx, args.phoneNumber, args.code);
   }
 }
