@@ -16,11 +16,11 @@ export class PhoneOtpResolver {
   resendPhoneOtp(@Ctx() ctx: RequestContext, @Args() args: { phoneNumber: string }): Promise<string | null> {
     return this.phoneOtpService.resendOtp(ctx, args.phoneNumber);
   }
-  @Mutation()
-  async verifyPhoneOtp(
-    @Ctx() ctx: RequestContext,
-    @Args() args: { phoneNumber: string; code: string }
-  ): Promise<boolean> {
-    return this.phoneOtpService.verifyOtp(ctx, args.phoneNumber, args.code);
-  }
+  // @Mutation()
+  // async verifyPhoneOtp(
+  //   @Ctx() ctx: RequestContext,
+  //   @Args() args: { phoneNumber: string; code: string }
+  // ): Promise<boolean> {
+  //   return this.phoneOtpService.verifyOtp(ctx, args.phoneNumber, args.code);
+  // }
 }

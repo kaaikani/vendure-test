@@ -13,7 +13,6 @@ const schemaExtension = gql`
   extend type Mutation {
     sendPhoneOtp(phoneNumber: String!): String
     resendPhoneOtp(phoneNumber: String!): String
-        verifyPhoneOtp(phoneNumber: String!, code: String!): Boolean
   }
 `;
 
