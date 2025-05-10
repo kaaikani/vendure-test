@@ -42,14 +42,15 @@ export class CustomBannerService {
         @Inject(BANNER_PLUGIN_OPTIONS) private options: PluginInitOptions
     ) { }
 
-    findByChannel(ctx: RequestContext, channelId: string): Promise<CustomBanner[]> {
-        return this.connection.rawConnection.getRepository(CustomBanner).find({
-            relations: ['channels'],
-            where: {
-                channels: { id: channelId }  // Filters banners by channelId dynamically
-            }
-        });
-    }
+   findByChannel(ctx: RequestContext, channelId: string): Promise<CustomBanner[]> {
+    return this.connection.rawConnection.getRepository(CustomBanner).find({
+        relations: ['channels'],
+        where: {
+            channels: { id: channelId }
+        }
+    });
+}
+
     
 
     findAll(

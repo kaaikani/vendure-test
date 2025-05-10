@@ -11,9 +11,10 @@ export const shopApiExtensions = gql`
     }
 
     extend type Query {
-        customBanners(channelId: ID!): [CustomBanner!]!  # <-- Accepts channelId as argument
+        customBanners: [CustomBanner!]!  # Removed channelId argument
     }
 `;
+
 
 const customBannerAdminApiExtensions = gql`
  type CustomBanner implements Node {

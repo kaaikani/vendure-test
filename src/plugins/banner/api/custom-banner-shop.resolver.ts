@@ -1,7 +1,8 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { Allow, RequestContext } from '@vendure/core';
+import { Allow, Ctx, RequestContext } from '@vendure/core';
 import { CustomBannerService } from '../services/custom-banner.service';
 import { CustomBanner } from '../entities/custom-banner.entity';
+
 
 @Resolver()
 export class CustomBannerShopResolver {
@@ -9,9 +10,8 @@ export class CustomBannerShopResolver {
 
     @Query()
     async customBanners(
-        @Args('channelId') channelId: string,  // Accepts channelId from query
-        ctx: RequestContext                    // Use RequestContext directly
+        @Ctx() ctx: RequestContext
     ): Promise<CustomBanner[]> {
-        return this.customBannerService.findByChannel(ctx, channelId);
+        return this.customBannerService.findByChannel(ctx, String(ctx.channelId));
     }
 }
