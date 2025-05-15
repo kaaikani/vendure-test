@@ -24,6 +24,11 @@ function customAdminUi(options) {
                 banner_plugin_1.BannerPlugin.UiExtensions,
                 manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin.UiExtensions,
                 // StockMonitoringPlugin.ui,
+                (0, compiler_1.setBranding)({
+                    smallLogoPath: path_1.default.join(__dirname, "/assets/KaaiKani.png"),
+                    largeLogoPath: path_1.default.join(__dirname, "/assets/KaaiKani.png"),
+                    faviconPath: path_1.default.join(__dirname, "/assets/KaaiKani.png"),
+                }),
             ],
             devMode: options.devMode,
         });

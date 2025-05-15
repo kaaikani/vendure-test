@@ -25,6 +25,11 @@ export function customAdminUi(options: {
         BannerPlugin.UiExtensions,
         ManualCustomerChannelPlugin.UiExtensions,
         // StockMonitoringPlugin.ui,
+        setBranding({
+          smallLogoPath: path.join(__dirname, "/assets/KaaiKani.png"),
+          largeLogoPath: path.join(__dirname, "/assets/KaaiKani.png"),
+          faviconPath: path.join(__dirname, "/assets/KaaiKani.png"),
+        }),
         
       ],
       devMode: options.devMode,

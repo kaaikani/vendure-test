@@ -29,6 +29,7 @@ import { configureCustomS3AssetStorage } from './cdn-aware-s3-storage';
 import { CustomerChannelPlugin } from './plugins/customer-channel-plugin';
 import { PhoneOtpPlugin } from './plugins/otpmechanism/plugins/phone-otp.plugin';
 import { PhoneOtpAuthenticationStrategy } from './plugins/otpmechanism/strategies/phone-otp.strategy';
+// import { RazorpayPlugin } from './plugins/razorpay/razorpay.plugin';
 
 
 
@@ -182,7 +183,7 @@ export const config: VendureConfig = {
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
     BannerPlugin,
- 
+    // RazorpayPlugin,
 
 
   ],
