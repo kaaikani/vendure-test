@@ -10,7 +10,7 @@ export class PhoneOtpService implements OnApplicationBootstrap {
 
   constructor(
     private connection: TransactionalConnection,
-    private smsService: SmsService, // Inject SmsService
+    private smsService: SmsService,
   ) {}
 
   onApplicationBootstrap() {}
@@ -37,9 +37,9 @@ export class PhoneOtpService implements OnApplicationBootstrap {
       await repository.save(phoneOtp);
   
       const sms = new SmsService(
-        "64638d10d6fc0577471d20a2", // Template ID
+        "6837fbafd6fc05485c278e03", // Template ID
         phoneNumber,
-        { OTP: token }
+        { var: token, Var:"cRQByF/CLA6"}
       );
   
       const smsResult = await sms.sendSms();

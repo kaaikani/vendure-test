@@ -12,7 +12,6 @@ import { BullMQJobQueuePlugin } from '@vendure/job-queue-plugin/package/bullmq';
 import { EmailPlugin, defaultEmailHandlers } from '@vendure/email-plugin';
 import 'dotenv/config';
 import { orderCanceledNotificationProcess } from './customOrderProcess/order-canceled-notification-process';
-import { productDeliveredNotificationProcess } from './customOrderProcess/product-delivered-notification-process';
 import { CancelOrderPlugin } from './plugins/cancelOrderPlugin';
 import { CheckUniquePhonePlugin } from './plugins/checkUniquePhonePlugin';
 import { CustomEventPlugin } from './plugins/customEventPlugin';
@@ -30,6 +29,8 @@ import { CustomerChannelPlugin } from './plugins/customer-channel-plugin';
 import { PhoneOtpPlugin } from './plugins/otpmechanism/plugins/phone-otp.plugin';
 import { PhoneOtpAuthenticationStrategy } from './plugins/otpmechanism/strategies/phone-otp.strategy';
 import { OrderSmsPlugin } from './plugins/order-sms/order-sms.plugin';
+import { RazorpayPlugin } from './plugins/razorpay/razorpay-plugin';
+import { OrderSmsNotificationPlugin } from './plugins/order-sms-notification.plugin';
 
 // import { RazorpayPlugin } from './plugins/razorpay/razorpay.plugin';
 
@@ -45,6 +46,7 @@ export const config: VendureConfig = {
     port: 3000,
     adminApiPath: 'admin-api',
     shopApiPath: 'shop-api',
+    adminListQueryLimit:2000,
     ...(IS_DEV
       ? {
         adminApiPlayground: {
@@ -185,11 +187,12 @@ export const config: VendureConfig = {
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
     BannerPlugin,
-        // CustomShippingPlugin,
+      RazorpayPlugin,
       OrderSmsPlugin,
+      OrderSmsNotificationPlugin,
 ],
   orderOptions: {
-    process: [defaultOrderProcess, productDeliveredNotificationProcess, orderCanceledNotificationProcess],
+    process: [defaultOrderProcess, orderCanceledNotificationProcess],
   },
 };
 

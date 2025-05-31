@@ -48,6 +48,7 @@ const customer_channel_plugin_1 = require("./plugins/customer-channel-plugin");
 const phone_otp_plugin_1 = require("./plugins/otpmechanism/plugins/phone-otp.plugin");
 const phone_otp_strategy_1 = require("./plugins/otpmechanism/strategies/phone-otp.strategy");
 const order_sms_plugin_1 = require("./plugins/order-sms/order-sms.plugin");
+const razorpay_plugin_1 = require("./plugins/razorpay/razorpay-plugin");
 // import { RazorpayPlugin } from './plugins/razorpay/razorpay.plugin';
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
@@ -185,7 +186,7 @@ exports.config = {
         collectionIsPrivate_1.CollectionIsPrivatePlugin,
         manualadmincustomerchannel_plugin_1.ManualCustomerChannelPlugin,
         banner_plugin_1.BannerPlugin,
-        // CustomShippingPlugin,
+        razorpay_plugin_1.RazorpayPlugin,
         order_sms_plugin_1.OrderSmsPlugin,
     ],
     orderOptions: {

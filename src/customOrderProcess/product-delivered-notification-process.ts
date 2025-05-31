@@ -1,6 +1,6 @@
 import { SmsService } from "../smsService";
 import { OrderProcess } from "@vendure/core";
-
+//Dont need Just reference code how state managemnet works
 export const productDeliveredNotificationProcess: OrderProcess<"ProductDeliveredNotificationProcess"> = {
   transitions: {
     Shipped: {
