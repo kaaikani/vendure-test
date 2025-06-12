@@ -10,30 +10,43 @@ services:
     volumes:
       - /usr/src/app
     environment:
-      DB_HOST: database
-      DB_PORT: 5432
-      DB_NAME: vendure
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
+      DB_TYPE: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: wow_vendure
+      DB_USERNAME: root
+      DB_PASSWORD: 1234
+    depends_on:
+      - mysql
+
   worker:
     build:
       context: .
       dockerfile: Dockerfile
     command: ["yarn", "start:worker"]
     volumes:
-      - /usr/src/app
+      - .:/usr/src/app
+
     environment:
-      DB_HOST: database
-      DB_PORT: 5432
-      DB_NAME: vendure
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
-  database:
-    image: postgres
-    volumes:
-      - /var/lib/postgresql/data
+      DB_TYPE: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: wow_vendure
+      DB_USERNAME: root
+      DB_PASSWORD: 1234
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0.42
+    container_name: mysql_vendure
     ports:
-      - 5432:5432
+      - "3307:3306"  # Host:Container
     environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: vendure
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: wow_vendure
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

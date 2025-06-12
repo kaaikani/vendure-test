@@ -33,5 +33,7 @@ export class OrderDeliveredListener implements OnApplicationBootstrap {
 @VendurePlugin({
   imports: [PluginCommonModule],
   providers: [OrderDeliveredListener],
+      compatibility: '^3.0.4',
+
 })
 export class OrderSmsNotificationPlugin {}

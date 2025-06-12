@@ -31,7 +31,6 @@ const bullmq_1 = require("@vendure/job-queue-plugin/package/bullmq");
 const email_plugin_1 = require("@vendure/email-plugin");
 require("dotenv/config");
 const order_canceled_notification_process_1 = require("./customOrderProcess/order-canceled-notification-process");
-const product_delivered_notification_process_1 = require("./customOrderProcess/product-delivered-notification-process");
 const cancelOrderPlugin_1 = require("./plugins/cancelOrderPlugin");
 const checkUniquePhonePlugin_1 = require("./plugins/checkUniquePhonePlugin");
 const customEventPlugin_1 = require("./plugins/customEventPlugin");
@@ -49,14 +48,15 @@ const phone_otp_plugin_1 = require("./plugins/otpmechanism/plugins/phone-otp.plu
 const phone_otp_strategy_1 = require("./plugins/otpmechanism/strategies/phone-otp.strategy");
 const order_sms_plugin_1 = require("./plugins/order-sms/order-sms.plugin");
 const razorpay_plugin_1 = require("./plugins/razorpay/razorpay-plugin");
-// import { RazorpayPlugin } from './plugins/razorpay/razorpay.plugin';
+const order_sms_notification_plugin_1 = require("./plugins/order-sms-notification.plugin");
 const IS_DEV = process.env.APP_ENV === 'dev';
 exports.config = {
     // logger: new DefaultLogger({ level: LogLevel.Verbose }),
     apiOptions: {
-        port: 3000,
+        port: 80,
         adminApiPath: 'admin-api',
         shopApiPath: 'shop-api',
+        adminListQueryLimit: 2000,
         ...(IS_DEV
             ? {
                 adminApiPlayground: {
@@ -188,8 +188,9 @@ exports.config = {
         banner_plugin_1.BannerPlugin,
         razorpay_plugin_1.RazorpayPlugin,
         order_sms_plugin_1.OrderSmsPlugin,
+        order_sms_notification_plugin_1.OrderSmsNotificationPlugin,
     ],
     orderOptions: {
-        process: [core_1.defaultOrderProcess, product_delivered_notification_process_1.productDeliveredNotificationProcess, order_canceled_notification_process_1.orderCanceledNotificationProcess],
+        process: [core_1.defaultOrderProcess, order_canceled_notification_process_1.orderCanceledNotificationProcess],
     },
 };

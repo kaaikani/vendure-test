@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productDeliveredNotificationProcess = void 0;
 const smsService_1 = require("../smsService");
+//Dont need Just reference code how state managemnet works
 exports.productDeliveredNotificationProcess = {
     transitions: {
         Shipped: {

@@ -31,8 +31,8 @@ import { PhoneOtpAuthenticationStrategy } from './plugins/otpmechanism/strategie
 import { OrderSmsPlugin } from './plugins/order-sms/order-sms.plugin';
 import { RazorpayPlugin } from './plugins/razorpay/razorpay-plugin';
 import { OrderSmsNotificationPlugin } from './plugins/order-sms-notification.plugin';
+import { razorpayPaymentMethodHandler } from './plugins/razorpay/razorpay-payment-method';
 
-// import { RazorpayPlugin } from './plugins/razorpay/razorpay.plugin';
 
 
 
@@ -43,7 +43,7 @@ const IS_DEV = process.env.APP_ENV === 'dev';
 export const config: VendureConfig = {
   // logger: new DefaultLogger({ level: LogLevel.Verbose }),
   apiOptions: {
-    port: 3000,
+    port: 80,
     adminApiPath: 'admin-api',
     shopApiPath: 'shop-api',
     adminListQueryLimit:2000,
@@ -87,9 +87,9 @@ export const config: VendureConfig = {
     password: process.env.DB_PASSWORD,
 
   },
-  paymentOptions: {
+ paymentOptions: {
     paymentMethodHandlers: [dummyPaymentHandler],
-  },
+},
   customFields: {},
   promotionOptions: {
     promotionConditions: [...defaultPromotionConditions, shouldApplyCouponcode],
