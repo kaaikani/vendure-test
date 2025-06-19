@@ -22,9 +22,9 @@ export function customAdminUi(options: {
         BannerPlugin.UiExtensions,
         ManualCustomerChannelPlugin.UiExtensions,
         setBranding({
-          smallLogoPath: path.join(__dirname, '/assets/kk.png'),
-          largeLogoPath: path.join(__dirname, '/assets/kk.png'),
-          faviconPath: path.join(__dirname, '/assets/kk.png'),
+          smallLogoPath: path.join(__dirname, '/assets/go.png'),
+          largeLogoPath: path.join(__dirname, '/assets/go.png'),
+          faviconPath: path.join(__dirname, '/assets/go.png'),
         }),
       ],
       devMode: options.devMode,
