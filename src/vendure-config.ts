@@ -186,7 +186,7 @@ export const config: VendureConfig = {
     CustomTokenPlugin,
     CollectionIsPrivatePlugin,
     ManualCustomerChannelPlugin,
-    BannerPlugin,
+    //BannerPlugin,
       RazorpayPlugin,
       OrderSmsPlugin,
       OrderSmsNotificationPlugin,
