@@ -34,13 +34,22 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: 📋 Download ECS task definition
+      - name: 📋 Download and sanitize ECS task definition
         run: |
           aws ecs describe-task-definition \
             --task-definition ${{ secrets.ECS_TASK_DEFINITION }} \
-            --query taskDefinition > task-def.json
-
+            --query 'taskDefinition | {
+              family,
+              containerDefinitions,
+              executionRoleArn,
+              taskRoleArn,
+              networkMode,
+              volumes,
+              placementConstraints,
+              requiresCompatibilities,
+              cpu,
+              memory
+            }' > task-def.json
       - name: 📝 Update container image in task definition
         run: |
           IMAGE="${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}"
