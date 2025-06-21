@@ -171,7 +171,7 @@ export const config: VendureConfig = {
       },
     }),
     AdminUiPlugin.init({
-      port: 3002,
+      port: 80,
       app: {
         path: path.join(__dirname, '../admin-ui/dist'),
       },
