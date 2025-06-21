@@ -32,6 +32,7 @@ import { OrderSmsPlugin } from './plugins/order-sms/order-sms.plugin';
 import { RazorpayPlugin } from './plugins/razorpay/razorpay-plugin';
 import { OrderSmsNotificationPlugin } from './plugins/order-sms-notification.plugin';
 import { razorpayPaymentMethodHandler } from './plugins/razorpay/razorpay-payment-method';
+import { SetISTOrderPlacedAtPlugin } from './plugins/orderplacedat';
 
 
 
@@ -190,6 +191,7 @@ export const config: VendureConfig = {
       RazorpayPlugin,
       OrderSmsPlugin,
       OrderSmsNotificationPlugin,
+      SetISTOrderPlacedAtPlugin
 ],
   orderOptions: {
     process: [defaultOrderProcess, orderCanceledNotificationProcess],
